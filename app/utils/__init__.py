@@ -1,1 +1,1 @@
-from .utils import read_json_from_s3, Cache
+from .utils import read_json_from_s3, Cache, get_completion_from_messages

@@ -34,8 +34,8 @@ Here is the conversation:
 response_schemas = [
     ResponseSchema(name="checkin_date", description="reservation Check-In date formated as YYYY-MM-DD i.e: 2023-09-24. If not present, set an empty string."),
     ResponseSchema(name="checkout_date", description="reservation Check-Out date formated as YYYY-MM-DD i.e: 2023-09-24. If not present, set an empty string."),
-    ResponseSchema(name="num_nights", description="Number of nights the customer is staying. If not present, set an empty string."),
-    ResponseSchema(name="num_guests", description="Number of guests staying in the house. If not present, set an empty string"),
+    ResponseSchema(name="num_nights", description="Number of nights the customer is staying. If not present, set 0."),
+    ResponseSchema(name="num_guests", description="Number of guests staying in the house. If not present, set 0."),
 ]
 
 

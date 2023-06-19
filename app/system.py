@@ -3,45 +3,47 @@ from typing import List, Any
 import boto3
 import json
 from .utils import Cache, read_json_from_s3
+from .task_resolver import Task, Step, StepResolver
 
 AVAILABLE_TASKS = {
     "MAKE_RESERVATION": {
-        "STEPS": [
+        "description":"Book accomodation for s short-term stay.",
+        "steps": [
             "GATHER_BOOKING_INFORMATION",
             "HOUSE_SELECTION",
-            "CHECKOUT",
-            "GATHER_USER_INFORMATION"
+            "GATHER_USER_INFORMATION",
+            "CHECKOUT"
         ]
+    },
+    "OTHER": {
+        "description":"Any other.",
+        "steps":[]
     }
 }
 
-class Task:
-    name: str
-    steps: List[str]
-    data: dict
-
 class Conversation:
     messages: List[str]
-    task: Task
-    step: str
+    task: Task # e.g: the user is making a reservation
 
 
 class System:
     
-    conversations_cache = Cache(60*15)
-
-    properties_info_cache = Cache(-1)
-
+    conversations_cache: Cache
+    conversation_messages_cache: Cache
+    properties_info_cache: Cache
 
 
     def __init__(self, assistant_number="test-number"):
         self.assistant_number = assistant_number
+        self.conversations_cache = Cache(60*24*60) # 24 hours
+        self.conversation_messages_cache = Cache(60*15) # 15 mins
+        self.properties_info_cache = Cache(-1)
 
     def get_conversation(self, customer_number) -> List[Any]:
-        return self.conversations_cache.get(customer_number)
+        return self.conversation_messages_cache.get(customer_number)
     
     def save_conversation(self, customer_number, conversation):
-        self.conversations_cache.set(customer_number, conversation)
+        self.conversation_messages_cache.set(customer_number, conversation)
     
     def _add_message(self, msg, customer_number, role):
         conversation = self.get_conversation(customer_number)

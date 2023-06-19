@@ -1,4 +1,4 @@
-from .info_extractor_tool import InfoExtractorTool
+from .info_extractor_tool import InfoExtractorTool, InfoExtractorChain
 from .properties_filter_tool import PropertiesFilterTool
 from .properties_summarizer_tool import PropertiesSummarizerTool
 from .create_booking_tool import CreateBookingTool
