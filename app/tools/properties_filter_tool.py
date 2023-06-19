@@ -52,7 +52,7 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
     """My custom Properties filter tool."""
 
     name = "properties_filter"
-    description = "useful for when you need to filter the properties based on the check-in date, check-out date and number of guests. Do not use this tool if any of this information is missing."
+    description = "useful for when you need to load the properties information based on the check-in date, check-out date and number of guests. Do not use this tool if any of this information is missing."
 
     args_schema: Type[PropertiesFilterToolSchema] = PropertiesFilterToolSchema
     
@@ -111,7 +111,7 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
                     and num_guests <= avail_capacity
                 ):
                     # Remove multiple keys
-                    del property_info["calendar_link"], property_info["source"]
+                    del property_info["calendar_link"], property_info["source"], property_info["availability"]
                     filtered_properties[property_id] = property_info
                     break  # Stop further iteration if a match is found
         return filtered_properties

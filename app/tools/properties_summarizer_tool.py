@@ -56,7 +56,7 @@ class PropertiesSummarizerChain:
 
 class PropertiesSummarizerTool(BaseTool):
     name = "properties_summarizer"
-    description = "useful for when you need to summarize the information of a list of propererties available for booking."
+    description = "useful for when you need to summarize the information of a list of properties available for booking."
 
     summarizer = PropertiesSummarizerChain()
 

@@ -46,7 +46,7 @@ class GatherBookingInfoResolver(StepResolver):
             chat_history += f"{msg['role']}: {msg['content']}\n"
         return chat_history
 
-    def run(self, step_data: dict, messages: List[str]) -> str:
+    def run(self, step_data: dict, messages: List[str], previous_stes_data: List[Any]) -> str:
         chat_input = self.build_messages_from_conversation(messages)
         result = get_completion_from_messages(chat_input)
         
