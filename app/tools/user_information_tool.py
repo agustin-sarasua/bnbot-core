@@ -18,28 +18,23 @@ from langchain.callbacks.manager import (
 )
 
 template = """Given a conversation between a user and an assistant about booking a house for short-term stay. \
-Your job is to extract the check-in date, checkout-date and number of nights \
-from the query.
-If the year is not specified in the query, assume it is after today, \
-same year or at most next year if the month is before current month.
-Today is {time}.
-
-{query}
+Your job is to extract the name, the user email and the user phone_number \
+from the conversation.
 
 Here is the conversation: 
 {chat_history}
+{input}
 
 {format_instructions}"""
 
 response_schemas = [
-    ResponseSchema(name="checkin_date", description="reservation Check-In date formated as YYYY-MM-DD i.e: 2023-09-24. If not present, set an empty string."),
-    ResponseSchema(name="checkout_date", description="reservation Check-Out date formated as YYYY-MM-DD i.e: 2023-09-24. If not present, set an empty string."),
-    ResponseSchema(name="num_nights", description="Number of nights the customer is staying. If not present, set an empty string."),
-    ResponseSchema(name="num_guests", description="Number of guests staying in the house. If not present, set an empty string"),
+    ResponseSchema(name="booking_name", description="The name of the person for the booking. "),
+    ResponseSchema(name="booking_email", description="The email for the booking."),
+    ResponseSchema(name="booking_phone_number", description="The phone number used for the booking."),
 ]
 
 
-class InfoExtractorChain:
+class UserInfoExtractorChain:
 
     def __init__(self):
 
@@ -49,7 +44,7 @@ class InfoExtractorChain:
         format_instructions =self.output_parser.get_format_instructions()
 
         prompt_template = PromptTemplate(
-            input_variables=["time", "query", "chat_history"], 
+            input_variables=["input", "chat_history"], 
             partial_variables={"format_instructions": format_instructions},
             template=template
         )
@@ -61,26 +56,24 @@ class InfoExtractorChain:
 
     def __call__(self, query, chat_history):
 
-        today = datetime.today()
-        formatted_date = today.strftime("%d %B %Y")
-        info = self.chain({"time":formatted_date, "query":query,  "chat_history": chat_history})
+        info = self.chain({"input": input, "chat_history": chat_history})
         return self.output_parser.parse(info["booking_information"])
     
 
-class InfoExtractorTool(BaseTool):
-    name = "info_extractor"
-    description = "useful for when you need to calculate the check-in, check-out and number of guests from the query and chat_history."
+class UserInfoExtractorTool(BaseTool):
+    name = "user_information_extractor"
+    description = "useful for when you need to extract the email, name and phone_number for the booking."
 
-    booking_info_extractor = InfoExtractorChain()
+    booking_info_extractor = UserInfoExtractorChain()
 
     def _run(
-        self, query: str, chat_history: str, run_manager: Optional[CallbackManagerForToolRun] = None
+        self, input: str, chat_history: str, run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool."""
-        return self.booking_info_extractor(query, chat_history)
+        return self.booking_info_extractor(input, chat_history)
 
     async def _arun(
-        self, query: str, chat_history: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+        self, input: str, chat_history: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
     ) -> str:
         """Use the tool asynchronously."""
         raise NotImplementedError("custom_search does not support async")

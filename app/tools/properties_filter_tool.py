@@ -110,6 +110,8 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
                     and avail_checkout >= checkout_date
                     and num_guests <= avail_capacity
                 ):
+                    # Remove multiple keys
+                    del property_info["calendar_link"], property_info["source"]
                     filtered_properties[property_id] = property_info
                     break  # Stop further iteration if a match is found
         return filtered_properties
@@ -117,7 +119,7 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
     def get_properties_availabe(self):
         result = self.properties_info_cache.get(self.assistant_number)        
         if result is None:
-            result = self.load_properties_information(self)
+            result = self.load_properties_information()
         return result
 
     def load_properties_information(self):

@@ -4,12 +4,35 @@ import boto3
 import json
 from .utils import Cache, read_json_from_s3
 
+AVAILABLE_TASKS = {
+    "MAKE_RESERVATION": {
+        "STEPS": [
+            "GATHER_BOOKING_INFORMATION",
+            "HOUSE_SELECTION",
+            "CHECKOUT",
+            "GATHER_USER_INFORMATION"
+        ]
+    }
+}
+
+class Task:
+    name: str
+    steps: List[str]
+    data: dict
+
+class Conversation:
+    messages: List[str]
+    task: Task
+    step: str
+
 
 class System:
     
     conversations_cache = Cache(60*15)
 
     properties_info_cache = Cache(-1)
+
+
 
     def __init__(self, assistant_number="test-number"):
         self.assistant_number = assistant_number
