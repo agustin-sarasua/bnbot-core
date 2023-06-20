@@ -49,14 +49,19 @@ class HouseSelectionResolver(StepResolver):
         house_info = info_extractor(chat_history, properties_info)
 
         if house_info["property_id"] != "":
-            step_data["property_picked"] = house_info["property_id"]
+            step_data["property_picked_info"] = {
+                "property_id": house_info["property_id"],
+                # "price_per_night": properties_info[house_info["property_id"]]["price"],
+                # "total_price": f"{int(properties_info[house_info['property_id']]['price']) * int(booking_info['num_nights'])}"
+            }
+
 
         print(f"Assistant Response: {house_info}")
         return house_info["text"]
     
     def is_done(self, step_data: dict):
-        if "property_picked" not in step_data:
+        if "property_picked_info" not in step_data:
             return False
         
         # TODO validate that the property_picked is valid agains the properties_available.
-        return (step_data["property_picked"] != "" and step_data["property_picked"] is not None)
+        return (step_data["property_picked_info"]["property_id"] != "" and step_data["property_picked_info"]["property_id"] is not None)

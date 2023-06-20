@@ -17,30 +17,34 @@ from langchain.callbacks.manager import (
 )
 from langchain.chat_models import ChatOpenAI
 
-template="""You are an Assistant that helps users choose a house based on its preferences. 
-Your task is only to help users pick a house for booking and answer any question about the properties, any other task must not be handled by you.
+# Follow these Steps before responding to the user new message:
 
-Follow these Steps before responding to the user new message:
+# Step 1: Make sure the user provided user name and email.
 
-Step 1: Show the user a summary of the available properties including a brief description and the price per night for each property. 
-Here is the list of properties available:
-{properties_info}
-Step 2: Make sure that the user select one property for making the booking.
+# Step 2: If the user provided with this information, you thank him.
 
-Step 3: If the user selected one property, you ask him to provide you with an email and name.
+template ="""
+You are an Assistant that gathers information from the user to book an accomodation. 
+You respond allways in Spanish.
+The only information you need is the email and the name of the person doing the reservation.
 
 Here is the conversation: 
 {chat_history}
 
-{format_instructions}"""
+{format_instructions}
+
+You respond in a short, very conversational friendly style.
+
+REMEMBER: Only asked for the information needed, nothing else."""
 
 response_schemas = [
-    ResponseSchema(name="property_id", description="The property_id of the property selected by the user"),
+    ResponseSchema(name="user_name", description="The name of the user booking the house"),
+    ResponseSchema(name="email", description="The email of the user booking the house"),
     ResponseSchema(name="text", description="The response to the user"),
 ]
 
 
-class HousePickedExtractorChain:
+class UserInformationExtractorChain:
 
     def __init__(self):
 
@@ -50,7 +54,7 @@ class HousePickedExtractorChain:
         format_instructions =self.output_parser.get_format_instructions()
 
         prompt_template = PromptTemplate(
-            input_variables=["chat_history", "properties_info"], 
+            input_variables=["chat_history"], 
             partial_variables={"format_instructions": format_instructions},
             template=template
         )
@@ -58,10 +62,10 @@ class HousePickedExtractorChain:
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
                               verbose=True,
-                              output_key="house_picked")
+                              output_key="user_info")
 
-    def __call__(self, chat_history, properties_info):
+    def __call__(self, chat_history):
 
-        info = self.chain({"properties_info": properties_info, "chat_history": chat_history})
-        return self.output_parser.parse(info["house_picked"])
+        info = self.chain({"chat_history": chat_history})
+        return self.output_parser.parse(info["user_info"])
     

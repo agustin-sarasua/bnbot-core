@@ -18,15 +18,19 @@ class Step:
     name: str
     data: dict
     status: str
-
+    reply_when_done: bool
     resolver: StepResolver
     
-    def __init__(self, name, resolver):
+    def __init__(self, name, resolver, reply_when_done=True):
         self.name = name
         self.status = "TODO"
         self.resolver = resolver
         self.data = dict()
+        self.reply_when_done = reply_when_done
     
+    def save_step_data(self, data):
+        self.data["result"] = data
+
     def is_done(self) -> bool:
         return self.status == "DONE"
     
@@ -69,5 +73,10 @@ class Task:
                 previous_steps_data[step.name] = step.data
                 continue
             else:
-                current_step = step
-                return step.resolve(conversation_messages, previous_steps_data)
+                current_step = step 
+                print(f"Resolving Step: {current_step.name}")
+                response = step.resolve(conversation_messages, previous_steps_data)
+                if step.is_done() and not step.reply_when_done :
+                    return self.run(conversation_messages)
+                return response
+                    
