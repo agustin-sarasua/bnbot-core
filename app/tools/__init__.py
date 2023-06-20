@@ -4,3 +4,5 @@ from .properties_summarizer_tool import PropertiesSummarizerTool
 from .house_extractor_tool import HousePickedExtractorChain
 from .user_info_extractor_tool import UserInformationExtractorChain
 from .booking_confirmation_tool import BookingConfirmationChain
+
+from .task_extractor_tool import TaskExtractorChain

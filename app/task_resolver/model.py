@@ -12,7 +12,12 @@ class StepResolver(ABC):
     @abstractmethod
     def is_done(self, step_data: dict):
         pass
-
+    
+    def build_chat_history(self, messages):
+        chat_history = ""
+        for msg in messages:
+            chat_history += f"{msg['role']}: {msg['content']}\n"
+        return chat_history
 
 class Step:
     name: str

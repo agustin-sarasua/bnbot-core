@@ -21,13 +21,6 @@ class HouseSelectionResolver(StepResolver):
 
             idx +=1
         return formatted_string
-    
-    
-    def build_chat_history(self, messages):
-        chat_history = ""
-        for msg in messages:
-            chat_history += f"{msg['role']}: {msg['content']}\n"
-        return chat_history
 
     def run(self, step_data: dict, messages: List[str], previous_steps_data: dict) -> str:
         
