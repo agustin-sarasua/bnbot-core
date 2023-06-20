@@ -1,8 +1,3 @@
-from typing import Optional
-from langchain.tools import BaseTool
-from datetime import datetime
-
-from langchain.llms import OpenAI
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
@@ -11,10 +6,6 @@ from langchain.prompts import PromptTemplate
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
-from langchain.callbacks.manager import (
-    AsyncCallbackManagerForToolRun,
-    CallbackManagerForToolRun,
-)
 from langchain.chat_models import ChatOpenAI
 
 template="""You are an Assistant that helps users choose a house based on its preferences. 

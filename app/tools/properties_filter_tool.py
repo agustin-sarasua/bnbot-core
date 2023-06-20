@@ -2,29 +2,12 @@ from typing import Optional
 from langchain.tools import BaseTool
 from datetime import datetime
 
-from langchain.llms import OpenAI
-from langchain.chains.llm import LLMChain
-from langchain.prompts import PromptTemplate
-
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
-from langchain.llms import OpenAI
-
-from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 
-import requests
-from langchain.tools import StructuredTool
-
-
 from typing import Optional, Type
-
-import aiohttp
-import requests
 
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
@@ -34,7 +17,6 @@ from langchain.tools import BaseTool
 from pydantic import BaseModel, BaseSettings, Field
 
 from datetime import datetime, timedelta
-# from app.utils import Cache, read_json_from_s3
 from ..utils import Cache, read_json_from_s3
 
 class PropertiesFilterToolSchema(BaseModel):
@@ -42,10 +24,6 @@ class PropertiesFilterToolSchema(BaseModel):
     checkout_date: str = Field(default="", description="check-out date")
     num_guests: str = Field(default="1", description="number of guests staying")
     num_nights: str = Field(default="1", description="number of nights staying")
-    # available_properties: dict = Field(default=dict(), description="available properties") 
-    # query_params: Optional[dict] = Field(
-    #     default=None, description="Optional search parameters"
-    # )
 
 
 class PropertiesFilterTool(BaseTool, BaseSettings):

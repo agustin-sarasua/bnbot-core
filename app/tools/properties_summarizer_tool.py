@@ -1,6 +1,5 @@
 from typing import Optional
 from langchain.tools import BaseTool
-from datetime import datetime
 
 from langchain.llms import OpenAI
 from langchain.chains.llm import LLMChain
