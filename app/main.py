@@ -3,10 +3,10 @@ import requests
 
 import os
 import openai
-from .system import System
-from .system import Conversation
-from .system import System
-from .task_resolver.tasks import create_make_reservation_task, create_task_router_task
+from app.system import System
+from app.system import Conversation
+from app.system import System
+from app.task_resolver.tasks import create_make_reservation_task, create_task_router_task
 
 openai.api_key = os.environ.get('OPEN_AI_TOKEN')
 whatsapp_token = os.environ.get('WHATSAPP_TOKEN')

@@ -1,6 +1,6 @@
-from ..model import StepResolver
+from app.task_resolver.model import StepResolver
 from typing import List
-from ...tools import BookingConfirmationChain
+from app.tools import BookingConfirmationChain
 
 class BookingConfirmationResolver(StepResolver):
 
