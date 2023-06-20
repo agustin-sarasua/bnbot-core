@@ -4,16 +4,18 @@ import boto3
 import json
 from .utils import Cache, read_json_from_s3
 from .task_resolver import Task, Step, StepResolver
-
+from .task_resolver.tasks import create_task_router_task
 
 class Conversation:
     
+    customer_number: str
     task: Task # e.g: the user is making a reservation
     messages: List[Any]
 
-    def __init__(self, task: Task):
+    def __init__(self, customer_number: str, task: Task):
         self.messages = []
         self.task = task
+        self.customer_number = customer_number
 
     def get_messages(self) -> List[Any]:
         return self.messages
@@ -46,8 +48,8 @@ class System:
         self.assistant_number = assistant_number
         self.conversations_cache = Cache(60*24*60) # 24 hours
 
-    def get_conversation(self, customer_number:str) -> Conversation:
-        return self.conversations_cache.get(customer_number)
+    def get_conversation(self, customer_number: str) -> Conversation:
+        return self.conversations_cache.get(customer_number, Conversation(customer_number, create_task_router_task()))
     
-    def save_conversation(self, customer_number, conversation: Conversation):
-        self.conversations_cache.set(customer_number, conversation)
+    def save_conversation(self, conversation: Conversation):
+        self.conversations_cache.set(conversation.customer_number, conversation)

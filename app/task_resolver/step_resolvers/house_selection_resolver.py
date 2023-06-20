@@ -1,9 +1,6 @@
 from ..model import StepResolver
 from typing import List, Any
-from ...utils import get_completion_from_messages
-from ...tools import InfoExtractorChain, PropertiesFilterTool, PropertiesSummarizerTool, HousePickedExtractorChain
-from ...agents import get_house_selection_agent
-from datetime import datetime, timedelta
+from ...tools import PropertiesFilterTool, HousePickedExtractorChain
 
 class HouseSelectionResolver(StepResolver):
 

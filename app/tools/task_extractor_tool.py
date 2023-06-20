@@ -9,14 +9,14 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.chat_models import ChatOpenAI
 #from langchain.llms import OpenAI
 
-template="""You are an Assistant that helps users perform actions related to booking a house for short-term stay.
-Your task is to identify which action does the user want to do. 
+template="""You are an Assistant that helps users.
+Your task is to identify which action does the user want to do. You allways answer in Spanish.
 
 Here is the list of possible actions:
 
-MAKE_RESERVATION: the user wants to book an accomodation.
-ASK_FOR_INFO: the user needs information about the properties available.
-RESERVATION_INFORMATION: the user wants information about an accomodation booked by him before.
+MAKE_RESERVATION_TASK: the user wants to book an accomodation.
+PROPERTIES_INFORMATION_TASK: the user needs information about the properties available.
+RESERVATION_INFORMATION_TASK: the user wants information about an accomodation booked before.
 OTHER: when None of the actions described above fits.
 
 Here is the conversation: 
@@ -26,7 +26,7 @@ Here is the conversation:
 
 response_schemas = [
     ResponseSchema(name="task_id", description="The task_id of the Task that the user wants to perform."),
-    ResponseSchema(name="text", description="The response to the user"),
+    ResponseSchema(name="text", description="The response to the user."),
 ]
 
 

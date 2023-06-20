@@ -71,6 +71,7 @@ class Task:
 
     def run(self, conversation_messages: List[Any]) -> str:
         if self.is_done():
+            print(f"Task DONE, returning NONE")
             return None
         previous_steps_data = {}
         for step in self.steps:
@@ -81,7 +82,10 @@ class Task:
                 current_step = step 
                 print(f"Resolving Step: {current_step.name}")
                 response = step.resolve(conversation_messages, previous_steps_data)
-                if step.is_done() and not step.reply_when_done :
+                if self.steps[-1].name == step.name:
+                    print("Reached final step")
+                    return response
+                if step.is_done() and not step.reply_when_done:
                     return self.run(conversation_messages)
                 return response
                     

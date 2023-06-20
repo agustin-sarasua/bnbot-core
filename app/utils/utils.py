@@ -35,12 +35,12 @@ class Cache:
         self.cache_data = {}
         self.timeout = timeout
 
-    def get(self, key):
-        value, timestamp = self.cache_data.get(key, ([], None))
+    def get(self, key, default_value):
+        value, timestamp = self.cache_data.get(key, (default_value, None))
         if self.timeout > 0:
             if timestamp and time.time() - timestamp > self.timeout:
                 self.delete(key)
-                return []
+                return default_value
         return value
 
     def set(self, key, value):

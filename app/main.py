@@ -3,16 +3,20 @@ import requests
 
 import os
 import openai
-from langchain.memory import ConversationBufferMemory
-
-import time
+from .system import System
+from .system import Conversation
+from .system import System
+from .task_resolver.tasks import create_make_reservation_task, create_task_router_task
 
 openai.api_key = os.environ.get('OPEN_AI_TOKEN')
+whatsapp_token = os.environ.get('WHATSAPP_TOKEN')
+
+system = System()
 
 def send_response_to_client(client_number="59899513718", message="hola"):
     url = 'https://graph.facebook.com/v17.0/102195312913032/messages'
     headers = {
-        'Authorization': 'Bearer EAAJASfMaTY4BAPoqWvo7fG3AgLffAM5ZBkVbdtSP9mZBZAEcUw6fB6ghi1pDx2cvpzZAFUzgd2mJaZCtb34w8f0LgBa88MT2ZAzdElbqcJzlZAQG0zztG1J1AZBbXM1mPHNHoWbVX1iZA5TSBu2YZCHR2reDQbSZAFSDS7RIZBqZBZCrTYuRn0PfZCtCe4ZC4RCiXs4MwYKKSeZAYj1aGegDOfITnkF0lCXZBfkwrWxJwZD',
+        'Authorization': f"Bearer {whatsapp_token}",
         'Content-Type': 'application/json'
     }
     data = {
@@ -27,6 +31,42 @@ def send_response_to_client(client_number="59899513718", message="hola"):
     }
     response = requests.post(url, headers=headers, data=json.dumps(data))
     print(response)
+
+def create_task(task_name):
+    if task_name == "MAKE_RESERVATION_TASK":
+        return create_make_reservation_task()
+    else:
+        return create_task_router_task()
+
+def main_flow(message: str, customer_number: str): 
+
+    if message == "exit":
+        system.save_conversation(Conversation(customer_number, create_task_router_task()))
+        return "Conversacion reiniciada. Puedes comenzar de nuevo!"
+
+    conversation = system.get_conversation(customer_number)
+    conversation.add_user_message(message)
+    print(f"Conversation: {conversation.get_messages()}")
+    task_result = conversation.task.run(conversation.get_messages())
+    if conversation.task.name == "TASK_ROUTER_TASK":
+        if task_result["task_id"] != "OTHER":
+            # Here I know already that he wants to make a reservation.
+            task = create_task(task_result["task_id"])
+            conversation.task = task
+            response = task.run(conversation.get_messages())
+            # if not task.steps[-1].reply_when_done:
+            #     return main_flow()                
+            conversation.add_assistant_message(response)
+            system.save_conversation(conversation)
+            return response
+        else:
+            conversation.add_assistant_message(task_result["text"])
+            system.save_conversation(conversation)
+            return task_result["text"]
+    else:
+        conversation.add_assistant_message(task_result)
+        system.save_conversation(conversation)
+        return task_result
 
 
 def handler(event, context):
@@ -53,7 +93,7 @@ def handler(event, context):
             profile_name = body['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
             wa_id = body['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
 
-            
+            response = main_flow(message=text_body, customer_number=wa_id)
             send_response_to_client(wa_id, response)
 
             response = {

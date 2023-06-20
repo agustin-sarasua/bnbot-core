@@ -19,11 +19,12 @@ class TaskIdentifierResolver(StepResolver):
             step_data["task_info"] = task_info
 
         print(f"Assistant Response: {task_info}")
-        return task_info["text"]
+        return task_info
         
     def is_done(self, step_data: dict):
         if "task_info" not in step_data:
             return False
          
         return (step_data["task_info"]["task_id"] != "" and 
-                step_data["task_info"]["task_id"] is not None)
+                step_data["task_info"]["task_id"] is not None and 
+                step_data["task_info"]["task_id"] != "OTHER")
