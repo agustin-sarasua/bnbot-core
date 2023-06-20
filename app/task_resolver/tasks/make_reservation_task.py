@@ -1,5 +1,5 @@
-from ...system import Task, Step
-from ...task_resolver import GatherBookingInfoResolver, HouseSelectionResolver, GatherUserInfoResolver, BookingConfirmationResolver
+from app.system import Task, Step
+from app.task_resolver import GatherBookingInfoResolver, HouseSelectionResolver, GatherUserInfoResolver, BookingConfirmationResolver
 
 def create_make_reservation_task():
     gather_booking_info_step = Step("GATHER_BOOKING_INFO", GatherBookingInfoResolver(), reply_when_done=False)
