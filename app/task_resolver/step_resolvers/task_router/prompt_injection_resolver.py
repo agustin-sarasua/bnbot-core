@@ -1,4 +1,4 @@
-from ...model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List, Any
 from datetime import datetime, timedelta
 

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
+from utils import logger
+
 
 class StepResolver(ABC):
     def __init__(self):
@@ -40,12 +42,16 @@ class Step:
         return self.status == "DONE"
     
     def resolve(self, messages: List[Any], previous_steps_data: List[Any]):
+        logger.debug(f"Resolving {self.__class__.__name__}")
         result = self.resolver.run(self.data, messages, previous_steps_data)
+        logger.debug(f"{self.__class__.__name__}: {result}")
         if self.resolver.is_done(self.data):
             self.status = "DONE"
+            
         else:
             self.status = "IN_PROGRESS"
-        
+        logger.debug(f"{self.__class__.__name__}: status {self.status}")
+        logger.debug(f"{self.__class__.__name__} Step Data: {self.data}")
         return result
 
 class Task:
@@ -71,21 +77,22 @@ class Task:
 
     def run(self, conversation_messages: List[Any]) -> str:
         if self.is_done():
-            print(f"Task DONE, returning NONE")
+            logger.info(f"Task {self.name} DONE, returning None")
             return None
         previous_steps_data = {}
         for step in self.steps:
             if step.is_done():
+                logger.debug(f"Skipping Task {self.name} it is DONE")
                 previous_steps_data[step.name] = step.data
                 continue
-            else:
-                current_step = step 
-                print(f"Resolving Step: {current_step.name}")
+            else: 
+                logger.debug(f"Task: {self.name} - Resolving Step: {step.name}")
                 response = step.resolve(conversation_messages, previous_steps_data)
                 if self.steps[-1].name == step.name:
-                    print("Reached final step")
+                    logger.debug(f"Task: {self.name} - Reached Final Step")
                     return response
                 if step.is_done() and not step.reply_when_done:
+                    logger.debug(f"Task: {self.name} - Step : {step.name} - Not replying, calling recursive.")
                     return self.run(conversation_messages)
                 return response
                     

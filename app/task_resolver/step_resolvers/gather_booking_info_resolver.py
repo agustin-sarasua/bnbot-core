@@ -1,8 +1,9 @@
-from app.task_resolver.model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List, Any
-from app.utils import get_completion_from_messages
-from app.tools import InfoExtractorChain
+from utils import get_completion_from_messages
+from tools import InfoExtractorChain
 from datetime import datetime, timedelta
+from utils import logger
 
 delimiter = "####"
 system_message =f"""
@@ -49,8 +50,6 @@ class GatherBookingInfoResolver(StepResolver):
     def run(self, step_data: dict, messages: List[str], previous_stes_data: List[Any]) -> str:
         chat_input = self.build_messages_from_conversation(messages)
         result = get_completion_from_messages(chat_input)
-        
-        print(f"Assistant Response: {result}")
 
         chat_history = self.build_chat_history(messages)
         
@@ -69,7 +68,7 @@ class GatherBookingInfoResolver(StepResolver):
         if num_nights > 0:
            checkout_date_from_nights = self._calculate_checkout_date(checkin_date, num_nights)
            if checkout_date != checkout_date_from_nights:
-               print("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
+               logger.error("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
                checkout_date = max(checkout_date, checkout_date_from_nights)
 
         num_guests = int(num_guests)
@@ -81,7 +80,6 @@ class GatherBookingInfoResolver(StepResolver):
             "num_guests": num_guests
         }
 
-        print(f"GatherBookingInfoResolver output: {step_data['booking_information'] }")        
         return result
     
     def is_done(self, step_data: dict):

@@ -17,7 +17,7 @@ from langchain.tools import BaseTool
 from pydantic import BaseModel, BaseSettings, Field
 
 from datetime import datetime, timedelta
-from app.utils import Cache, read_json_from_s3
+from utils import Cache, read_json_from_s3
 
 class PropertiesFilterToolSchema(BaseModel):
     checkin_date: str = Field(default="", description="check-in date")

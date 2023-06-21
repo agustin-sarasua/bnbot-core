@@ -61,8 +61,8 @@ resource "aws_s3_bucket_acl" "bnbot_bucket" {
 }
 
 # Create an IAM policy for the Lambda function
-resource "aws_iam_policy" "availability_lambda_policy" {
-  name        = "lambda-function-policy"
+resource "aws_iam_policy" "bnbot_bucket_lambda_policy" {
+  name        = "bnbot-bucket-policy"
   description = "Policy to allow access to the S3 bucket"
   policy      = <<EOF
 {
@@ -72,7 +72,7 @@ resource "aws_iam_policy" "availability_lambda_policy" {
       "Sid": "AllowLambdaAccess",
       "Effect": "Allow",
       "Action": [
-        "s3:PutObject"
+        "s3:*"
       ],
       "Resource": [
         "${aws_s3_bucket.bnbot_bucket.arn}/*"
@@ -106,7 +106,12 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "availability_lambda_role_policy_attachment" {
   role       = aws_iam_role.availability_lambda_role.name
-  policy_arn = aws_iam_policy.availability_lambda_policy.arn
+  policy_arn = aws_iam_policy.bnbot_bucket_lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "bnbot_lambda_lambda_role_policy_attachment" {
+  role       = aws_iam_role.bnbot_lambda_role.name
+  policy_arn = aws_iam_policy.bnbot_bucket_lambda_policy.arn
 }
 
 resource "aws_lambda_function" "availability_function" {
@@ -132,30 +137,18 @@ resource "aws_lambda_function" "bnbot_function" {
   image_uri     = "${data.aws_ecr_repository.bnbot_ecr_repo.repository_url}:${var.env_name}"
   package_type  = "Image"
 
-  role = aws_iam_role.lambda_exec.arn
+  role = aws_iam_role.bnbot_lambda_role.arn
 
   environment {
     variables = {
       ENVIRONMENT = var.env_name
       OPEN_AI_TOKEN = var.open_ai_token
+      OPENAI_API_KEY = var.open_ai_token
       WHATSAPP_URL = var.whatsapp_url
+      WHATSAPP_TOKEN = var.whatsapp_token
     }
   }
 }
-
-# resource "aws_lambda_function" "hello_world" {
-#   function_name = "HelloWorld"
-#   s3_bucket = aws_s3_bucket.lambda_bucket.id
-#   s3_key    = aws_s3_object.lambda_hello_world.key
-
-#   # runtime       = "python3.9"
-#   # handler       = "lambda_function.lambda_handler"
-
-#   source_code_hash = data.archive_file.python_lambda_package.output_base64sha256
-#   role = aws_iam_role.lambda_exec.arn
-  
-#   timeout       = 10
-# }
 
 resource "aws_cloudwatch_log_group" "hello_world" {
   name = "/aws/lambda/${aws_lambda_function.bnbot_function.function_name}"
@@ -163,8 +156,8 @@ resource "aws_cloudwatch_log_group" "hello_world" {
   retention_in_days = 30
 }
 
-resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+resource "aws_iam_role" "bnbot_lambda_role" {
+  name = "bnbot_lambda_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -181,7 +174,7 @@ resource "aws_iam_role" "lambda_exec" {
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_policy" {
-  role       = aws_iam_role.lambda_exec.name
+  role       = aws_iam_role.bnbot_lambda_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 

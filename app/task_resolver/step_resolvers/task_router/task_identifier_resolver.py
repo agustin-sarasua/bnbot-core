@@ -1,7 +1,7 @@
-from app.task_resolver.model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List, Any
 from datetime import datetime, timedelta
-from app.tools import TaskExtractorChain
+from tools import TaskExtractorChain
 
 
 class TaskIdentifierResolver(StepResolver):

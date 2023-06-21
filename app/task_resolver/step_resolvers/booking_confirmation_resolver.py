@@ -1,6 +1,7 @@
-from app.task_resolver.model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List
-from app.tools import BookingConfirmationChain
+from tools import BookingConfirmationChain
+from utils import logger
 
 class BookingConfirmationResolver(StepResolver):
 
@@ -47,8 +48,6 @@ class BookingConfirmationResolver(StepResolver):
         # if result["confirmed"] == "True":
         #     # TODO save booking in database.
         #     pass
-
-        print(f"Resolver: {result}")
         return result["text"]
     
     def is_done(self, step_data: dict):

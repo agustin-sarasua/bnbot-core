@@ -27,6 +27,7 @@ def read_json_from_s3(bucket_name, file_name):
         return json_data
     except Exception as e:
         print(f"Error reading JSON file: {e}")
+        
         return None
 
 

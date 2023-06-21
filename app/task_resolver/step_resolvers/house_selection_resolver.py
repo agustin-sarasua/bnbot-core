@@ -1,6 +1,7 @@
-from app.task_resolver.model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List, Any
-from app.tools import PropertiesFilterTool, HousePickedExtractorChain
+from tools import PropertiesFilterTool, HousePickedExtractorChain
+from utils import logger
 
 class HouseSelectionResolver(StepResolver):
 
@@ -26,12 +27,11 @@ class HouseSelectionResolver(StepResolver):
         property_loader = PropertiesFilterTool()
         if "properties_available" not in step_data:
             properties_available = property_loader.run(tool_input=booking_info)
+            logger.debug(f"{self.__class__.__name__} - Properties available: {properties_available}")
             step_data["properties_available"]=properties_available
         properties_available = step_data["properties_available"]
 
         properties_info = self._format_json(properties_available)
-
-        print(properties_info)
         
         chat_history = self.build_chat_history(messages)
 
@@ -44,9 +44,6 @@ class HouseSelectionResolver(StepResolver):
                 # "price_per_night": properties_info[house_info["property_id"]]["price"],
                 # "total_price": f"{int(properties_info[house_info['property_id']]['price']) * int(booking_info['num_nights'])}"
             }
-
-
-        print(f"Assistant Response: {house_info}")
         return house_info["text"]
     
     def is_done(self, step_data: dict):

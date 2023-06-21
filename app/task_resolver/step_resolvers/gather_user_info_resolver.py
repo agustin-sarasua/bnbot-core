@@ -1,7 +1,7 @@
-from app.task_resolver.model import StepResolver
+from task_resolver.model import StepResolver
 from typing import List, Any
-from app.utils import get_completion_from_messages
-from app.tools import UserInformationExtractorChain
+from utils import get_completion_from_messages
+from tools import UserInformationExtractorChain
 from datetime import datetime, timedelta
 
 delimiter = "####"
