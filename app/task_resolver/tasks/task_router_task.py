@@ -1,5 +1,5 @@
-from system import Task, Step
-from task_resolver import TaskIdentifierResolver, PromptInjectionResolver, ExitTaskResolver
+from app.system import Task, Step
+from app.task_resolver import TaskIdentifierResolver, PromptInjectionResolver, ExitTaskResolver
 
 def create_task_router_task():
     detect_prompt_injection_step = Step("PROMPT_INJECTION_STEP", PromptInjectionResolver(), reply_when_done=False)

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Any
-from utils import logger
+from app.utils import logger
 
 
 class StepResolver(ABC):

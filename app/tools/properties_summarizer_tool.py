@@ -10,7 +10,7 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from utils import chain_verbose
+from app.utils import chain_verbose
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,

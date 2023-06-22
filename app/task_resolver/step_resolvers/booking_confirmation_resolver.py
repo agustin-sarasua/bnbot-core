@@ -1,7 +1,7 @@
-from task_resolver.model import StepResolver
+from app.task_resolver.model import StepResolver
+from app.tools import BookingConfirmationChain
+from app.utils import logger
 from typing import List
-from tools import BookingConfirmationChain
-from utils import logger
 
 class BookingConfirmationResolver(StepResolver):
 

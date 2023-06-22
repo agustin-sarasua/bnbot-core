@@ -5,7 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-from utils import chain_verbose
+from app.utils import chain_verbose
 from langchain.chat_models import ChatOpenAI
 
 # Follow these Steps before responding to the user new message:

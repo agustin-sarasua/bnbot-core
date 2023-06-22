@@ -1,7 +1,7 @@
-from task_resolver.model import StepResolver
+from app.task_resolver.model import StepResolver
 from typing import List, Any
-from tools import PropertiesFilterTool, HousePickedExtractorChain
-from utils import logger
+from app.tools import PropertiesFilterTool, HousePickedExtractorChain
+from app.utils import logger
 
 class HouseSelectionResolver(StepResolver):
 

@@ -9,7 +9,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
-from utils import chain_verbose
+from app.utils import chain_verbose
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.callbacks.manager import (

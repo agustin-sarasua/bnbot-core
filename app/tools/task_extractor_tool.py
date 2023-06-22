@@ -7,7 +7,7 @@ from langchain.prompts import PromptTemplate
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.chat_models import ChatOpenAI
-from utils import chain_verbose
+from app.utils import chain_verbose
 #from langchain.llms import OpenAI
 
 template="""You are an Assistant that helps users.
