@@ -82,7 +82,7 @@ class Task:
         previous_steps_data = {}
         for step in self.steps:
             if step.is_done():
-                logger.debug(f"Skipping Task {self.name} it is DONE")
+                logger.debug(f"Task: {self.name} - Skipping Step {self.name} - it is DONE")
                 previous_steps_data[step.name] = step.data
                 continue
             else: 

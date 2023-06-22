@@ -5,7 +5,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-
+from utils import chain_verbose
 from langchain.chat_models import ChatOpenAI
 
 # Follow these Steps before responding to the user new message:
@@ -52,7 +52,7 @@ class UserInformationExtractorChain:
 
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
-                              verbose=True,
+                              verbose=chain_verbose,
                               output_key="user_info")
 
     def __call__(self, chat_history):

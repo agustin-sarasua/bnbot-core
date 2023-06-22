@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.chat_models import ChatOpenAI
+from utils import chain_verbose
 #from langchain.llms import OpenAI
 
 template="""You are an Assistant that helps users.
@@ -47,7 +48,7 @@ class TaskExtractorChain:
 
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
-                              verbose=True,
+                              verbose=chain_verbose,
                               output_key="task_info")
 
     def __call__(self, chat_history):

@@ -139,6 +139,8 @@ resource "aws_lambda_function" "bnbot_function" {
 
   role = aws_iam_role.bnbot_lambda_role.arn
 
+  reserved_concurrent_executions = 1 # Restrict 1 instance for testing 
+
   environment {
     variables = {
       ENVIRONMENT = var.env_name

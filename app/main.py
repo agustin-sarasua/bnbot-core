@@ -113,7 +113,7 @@ def handler(event, context):
         
     except Exception as e:
         # Exception handling and returning a 200 OK response
-        logger.debug(f"Conversation: {str(e)}")
+        logger.error(f"Exception {str(e)}")
         if customer_number is not None:
             send_response_to_client(customer_number, "Ups... Tuvimos un problema procesando tu mensaje. Por favor contactate directo con Gonzalo: 099386573 ")
         response = {

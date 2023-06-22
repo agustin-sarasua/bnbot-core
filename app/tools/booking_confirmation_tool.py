@@ -5,8 +5,9 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-
 from langchain.chat_models import ChatOpenAI
+
+from utils import chain_verbose
 
 template="""You are an Assistant that helps users book houses for short-term stay. 
 Your task is make the user confirmed the booking based on the conversation.
@@ -54,7 +55,7 @@ class BookingConfirmationChain:
 
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
-                              verbose=True,
+                              verbose=chain_verbose,
                               output_key="booking_confirmation_info")
 
     def __call__(self, booking_info, chat_history):

@@ -10,7 +10,7 @@ from langchain.prompts import PromptTemplate
 from langchain.llms import OpenAI
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
-
+from utils import chain_verbose
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
@@ -45,7 +45,7 @@ class PropertiesSummarizerChain:
    
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
-                              verbose=True,
+                              verbose=chain_verbose,
                               output_key="properties_summary")
 
     def __call__(self, properties_available):

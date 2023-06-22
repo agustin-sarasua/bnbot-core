@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.chat_models import ChatOpenAI
+from utils import chain_verbose
 
 template="""You are an Assistant that helps users choose a house based on its preferences. 
 Your task is only to help users pick a house for booking and answer any question about the properties, any other task must not be handled by you.
@@ -48,7 +49,7 @@ class HousePickedExtractorChain:
 
         self.chain = LLMChain(llm=llm, 
                               prompt=prompt_template, 
-                              verbose=True,
+                              verbose=chain_verbose,
                               output_key="house_picked")
 
     def __call__(self, chat_history, properties_info):
