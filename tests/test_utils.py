@@ -14,15 +14,10 @@ from typing import List
 
 # Step 2: If the user provided with this information, you thank him.
 
-template = """You are a customer that wants to book an accomodation for the weekend \
-for the city of "Mercedes" at the "Complejo Enrique Joaquin". \
-Allways answer in Spanish.
-You ask your requirements one at a time.
-
-These are your requirements for the accomodation: {context}
+template = """{context}
 
 Respond ONLY with the next message from the Customer.
-If the conversation if over you reply with an empty string.
+If the conversation if over you reply with an empty string, i.e: "".
 Current conversation:
 {chat_history}
 Customer:

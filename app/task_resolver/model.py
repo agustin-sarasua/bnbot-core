@@ -42,16 +42,15 @@ class Step:
         return self.status == "DONE"
     
     def resolve(self, messages: List[Any], previous_steps_data: List[Any]):
-        logger.debug(f"Resolving {self.__class__.__name__}")
+        logger.debug(f"Resolving Step: {self.name}")
         result = self.resolver.run(self.data, messages, previous_steps_data)
         logger.debug(f"{self.__class__.__name__}: {result}")
         if self.resolver.is_done(self.data):
             self.status = "DONE"
-            
         else:
             self.status = "IN_PROGRESS"
-        logger.debug(f"{self.__class__.__name__}: status {self.status}")
-        logger.debug(f"{self.__class__.__name__} Step Data: {self.data}")
+        logger.debug(f"Step: {self.name} - Status {self.status}")
+        logger.debug(f"Step: {self.name} - Data: {self.data}")
         return result
 
 class Task:
@@ -82,7 +81,7 @@ class Task:
         previous_steps_data = {}
         for step in self.steps:
             if step.is_done():
-                logger.debug(f"Task: {self.name} - Skipping Step {self.name} - it is DONE")
+                logger.debug(f"Task: {self.name} - Skipping Step {step.name} - it is DONE")
                 previous_steps_data[step.name] = step.data
                 continue
             else: 

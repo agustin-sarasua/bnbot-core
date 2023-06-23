@@ -6,6 +6,15 @@ def create_make_reservation_task():
     house_selection_step = Step("HOUSE_SELECTION", HouseSelectionResolver())
     gather_user_info_step = Step("GATHER_USER_INFO", GatherUserInfoResolver(), reply_when_done=False)
     booking_confirmation_step = Step("BOOKING_CONFIRMATION", BookingConfirmationResolver())
-    reservation_task = Task("RESERVATION_TASK", [gather_booking_info_step, house_selection_step, gather_user_info_step, booking_confirmation_step])
+    reservation_task = MakeReservationTask("RESERVATION_TASK", [gather_booking_info_step, house_selection_step, gather_user_info_step, booking_confirmation_step])
 
     return reservation_task
+
+class MakeReservationTask(Task):
+
+    def post_processing(self):
+        last_step_data = self.steps[:-1].data
+        if "booking_confirmed" in last_step_data and last_step_data["booking_confirmed"] == "True":
+            pass
+        else:
+            pass

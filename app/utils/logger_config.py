@@ -3,9 +3,9 @@ import os
 
 # Create logger instance
 logger = logging.getLogger()
-logging_level = os.environ.get('LOGGING_LEVEL', "INFO")
+logging_level = os.environ.get('LOGGING_LEVEL', "DEBUG")
 
-chain_verbose = False
+chain_verbose = True
 logging_level == "DEBUG"
 
 logger.setLevel(logging_level)
