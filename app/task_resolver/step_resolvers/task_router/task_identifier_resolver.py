@@ -18,7 +18,6 @@ class TaskIdentifierResolver(StepResolver):
         if task_info["task_id"] != "":
             step_data["task_info"] = task_info
 
-        print(f"Assistant Response: {task_info}")
         return task_info
         
     def is_done(self, step_data: dict):

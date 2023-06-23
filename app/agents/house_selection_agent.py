@@ -6,7 +6,7 @@
 # from langchain.prompts import MessagesPlaceholder
 # from langchain.memory import ConversationBufferMemory
 
-# PREFIX = """You are an assistant that helps customer pick the best accomodation to stay. You have access to the following tools:"""
+# PREFIX = """You are an assistant that helps customer pick the best accommodation to stay. You have access to the following tools:"""
 
 # # tools = [PropertiesFilterTool(), PropertiesSummarizerTool()]
 

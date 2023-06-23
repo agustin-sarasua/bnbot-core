@@ -4,11 +4,20 @@ import json
 import os
 import openai
 
+def build_chat_history(messages):
+    chat_history = ""
+    for msg in messages:
+        chat_history += f"{msg['role']}: {msg['content']}\n"
+        return chat_history
 
 def get_completion_from_messages(messages, 
                                  model="gpt-3.5-turbo", 
                                  temperature=0, 
                                  max_tokens=500):
+    
+    # print(os.environ['OPENAI_API_KEY'])
+    # openai.api_key = os.environ['OPENAI_API_KEY']
+
     response = openai.ChatCompletion.create(
         model=model,
         messages=messages,

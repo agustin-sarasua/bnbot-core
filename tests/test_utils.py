@@ -14,32 +14,54 @@ from typing import List
 
 # Step 2: If the user provided with this information, you thank him.
 
-template ="""You are customer that wants to book an accomodation for the weekend \
-in the city of "Mercedes" at the "Complejo Enrique Joaquin". \
+template = """You are customer that wants to book an accomodation for the weekend \
+for the city of "Mercedes" at the "Complejo Enrique Joaquin". \
 Allways answer in Spanish.
 You ask your requirements one at a time.
 
 These are your requirements for the accomodation: {context}
 
+Respond ONLY with the next message from the Customer.
+If the conversation if over you reply with an empty string.
 Current conversation:
 {chat_history}
+Customer:
+"""
 
-You respond in a short, very conversational friendly style."""
+# template ="""Given a conversation between a user and an assistant.
+# What is the next interaction of the user?
+# Always respond in spanish.
 
-chain_of_though_template = """You are customer that wants to book an accomodation for the weekend \
+# These are your requirements for the accommodation: {context}
+
+# Follow these Steps:
+
+# Step 1: Make sure you provide information about check-in, check-out and number of people.
+
+# Step 2: Choose from the available houses one that meets your requirements if there is one.
+
+# Step 3: If you managed to choose a house, provide the information asked by the assistant to book the house.
+
+# Step 4: If you finally booked a house, thank the assistant for its help.
+
+# You respond in a short, very conversational friendly style.
+
+# Here is the conversation:
+# {chat_history}"""
+
+chain_of_though_template = """You are customer that wants to book an accommodation for the weekend \
 in the city of "Mercedes" at the "Complejo Enrique Joaquin". \
 Allways answer in Spanish.
 You ask your requirements one at a time.
 
-These are your requirements for the accomodation: {context}
+These are your requirements for the accommodation: {context}
 
 Follow these Steps before responding to the user new message:
 {chain_of_though}
 
 Current conversation:
 {chat_history}
-
-You respond in a short, very conversational friendly style.
+user:
 """
 
 response_schemas = [
@@ -50,23 +72,27 @@ response_schemas = [
 class FakeCustomerChain:
 
     chain_of_though_steps: List[str] = None
+    context: str =""
 
-    def __init__(self, chain_of_though_steps: List = None):
+    def __init__(self, chain_of_though_steps: List = None, context: str =""):
         llm = ChatOpenAI(temperature=0.)
         
+        self.context = context
+        used_template = template
+
         self.chain_of_though_steps = chain_of_though_steps
         input_variables = ["chat_history", "context"]
         if chain_of_though_steps is not None:
-            template = chain_of_though_template
+            used_template = chain_of_though_template
             input_variables.append("chain_of_though")
 
-        self.output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
-        format_instructions =self.output_parser.get_format_instructions()
+        # self.output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
+        # format_instructions =self.output_parser.get_format_instructions()
 
         prompt_template = PromptTemplate(
             input_variables=input_variables, 
-            partial_variables={"format_instructions": format_instructions},
-            template=template
+            # partial_variables={"format_instructions": format_instructions},
+            template=used_template
         )
 
         self.chain = LLMChain(llm=llm, 
@@ -74,13 +100,14 @@ class FakeCustomerChain:
                               verbose=True,
                               output_key="output")
 
-    def __call__(self, chat_history, context: str =""):
+    def __call__(self, chat_history):
         if self.chain_of_though_steps is not None:
             chain_of_though_input = ""
             for idx, step in enumerate(self.chain_of_though_steps):
                 chain_of_though_input += "Step {idx}: {step} \n"
-            info = self.chain({"chat_history": chat_history, "chain_of_though": chain_of_though_input, "context": context})
+            info = self.chain({"chat_history": chat_history, "chain_of_though": chain_of_though_input, "context": self.context})
         else:
-            info = self.chain({"chat_history": chat_history, "context": context})
-        return self.output_parser.parse(info["user_info"])
+            info = self.chain({"chat_history": chat_history, "context": self.context})
+        # return self.output_parser.parse(info["output"])["text"]
+        return info["output"]
     

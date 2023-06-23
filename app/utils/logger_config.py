@@ -5,7 +5,8 @@ import os
 logger = logging.getLogger()
 logging_level = os.environ.get('LOGGING_LEVEL', "INFO")
 
-chain_verbose = logging_level == "DEBUG"
+chain_verbose = False
+logging_level == "DEBUG"
 
 logger.setLevel(logging_level)
 

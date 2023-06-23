@@ -27,7 +27,7 @@ class Conversation:
         result =""
         for msg in self.messages:
             result += f"{msg['role']}: {msg['content']}\n"
-        return result
+        return result[:-1]
 
     def _add_message(self, msg, role):
         self.messages.append({'role':role, 'content': msg})

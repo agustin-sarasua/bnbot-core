@@ -15,9 +15,9 @@ Your task is to identify which action does the user want to do. You allways answ
 
 Here is the list of possible actions:
 
-MAKE_RESERVATION_TASK: the user wants to book an accomodation.
+MAKE_RESERVATION_TASK: the user wants to book an accommodation.
 PROPERTIES_INFORMATION_TASK: the user needs information about the properties available.
-RESERVATION_INFORMATION_TASK: the user wants information about an accomodation booked before.
+RESERVATION_INFORMATION_TASK: the user wants information about an accommodation booked before.
 OTHER: when None of the actions described above fits.
 
 Here is the conversation: 

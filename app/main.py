@@ -72,8 +72,9 @@ def main_flow(message: str, customer_number: str):
             system.save_conversation(conversation)
             return task_result["text"]
     else:
-        conversation.add_assistant_message(task_result)
-        system.save_conversation(conversation)
+        if task_result is not None:
+            conversation.add_assistant_message(task_result)
+            system.save_conversation(conversation)
         return task_result
 
 

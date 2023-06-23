@@ -15,9 +15,16 @@ from langchain.chat_models import ChatOpenAI
 # Step 2: If the user provided with this information, you thank him.
 
 template ="""
-You are an Assistant that gathers information from the user to book an accomodation. 
+You are an Assistant that gathers information from the user to book an accommodation. 
 You respond allways in Spanish.
 The only information you need is the email and the name of the person doing the reservation.
+
+Follow these Steps before responding:
+
+Step 1: Make sure the user gives yout the name and email for booking the accommodation.
+
+Step 2: If the user have not provided you with this information \ 
+then tell the user that you need them in order to place the booking.
 
 Here is the conversation: 
 {chat_history}
@@ -29,8 +36,8 @@ You respond in a short, very conversational friendly style.
 REMEMBER: Only asked for the information needed, nothing else."""
 
 response_schemas = [
-    ResponseSchema(name="user_name", description="The name of the user booking the house"),
-    ResponseSchema(name="email", description="The email of the user booking the house"),
+    ResponseSchema(name="user_name", description="The name of the user booking the house. If not provided set empty string"),
+    ResponseSchema(name="email", description="The email of the user booking the house. If not provided set empty string"),
     ResponseSchema(name="text", description="The response to the user"),
 ]
 

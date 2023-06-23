@@ -31,7 +31,10 @@ class HouseSelectionResolver(StepResolver):
             step_data["properties_available"]=properties_available
         properties_available = step_data["properties_available"]
 
-        properties_info = self._format_json(properties_available)
+        if len(properties_available.items()) == 0:
+            properties_info = "Unfortunately there are no properties available."
+        else:
+            properties_info = self._format_json(properties_available)
         
         chat_history = self.build_chat_history(messages)
 
