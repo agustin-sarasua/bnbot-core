@@ -14,7 +14,7 @@ from typing import List
 
 # Step 2: If the user provided with this information, you thank him.
 
-template = """You are customer that wants to book an accomodation for the weekend \
+template = """You are a customer that wants to book an accomodation for the weekend \
 for the city of "Mercedes" at the "Complejo Enrique Joaquin". \
 Allways answer in Spanish.
 You ask your requirements one at a time.

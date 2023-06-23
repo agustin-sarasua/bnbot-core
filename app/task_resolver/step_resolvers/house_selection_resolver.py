@@ -35,17 +35,17 @@ class HouseSelectionResolver(StepResolver):
             properties_info = "Unfortunately there are no properties available."
         else:
             properties_info = self._format_json(properties_available)
-        
+        print(properties_info)
         chat_history = self.build_chat_history(messages)
 
         info_extractor = HousePickedExtractorChain()
         house_info = info_extractor(chat_history, properties_info)
 
-        if house_info["property_id"] != "":
+        if "property_id" in house_info and  house_info["property_id"] is not None and house_info["property_id"] != "":
             step_data["property_picked_info"] = {
                 "property_id": house_info["property_id"],
-                # "price_per_night": properties_info[house_info["property_id"]]["price"],
-                # "total_price": f"{int(properties_info[house_info['property_id']]['price']) * int(booking_info['num_nights'])}"
+                "price_per_night": properties_available[house_info["property_id"]]["price"],
+                "total_price": f"{properties_available[house_info['property_id']]['currency']} {float(properties_available[house_info['property_id']]['price']) * float(booking_info['num_nights'])}"
             }
         return house_info["text"]
     

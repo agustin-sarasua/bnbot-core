@@ -15,8 +15,7 @@ def get_completion_from_messages(messages,
                                  temperature=0, 
                                  max_tokens=500):
     
-    # print(os.environ['OPENAI_API_KEY'])
-    # openai.api_key = os.environ['OPENAI_API_KEY']
+    openai.api_key = os.environ['OPENAI_API_KEY']
 
     response = openai.ChatCompletion.create(
         model=model,
