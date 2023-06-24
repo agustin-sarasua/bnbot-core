@@ -21,7 +21,7 @@ Here is the list of available properties:
 Step 2: If the user makes any question about the properties after showing the summary, answer it based on the available properties information. 
 
 Step 3: Make sure that the user select one property for making the booking. 
-When there are no properties avaialble, you must ask the user if he wants to look in other dates. 
+When there are no properties avaialble, you must ask the user if he wants to look for different dates. 
 
 Step 4: If the user does not want any of the available properties, \
 you appologize and tell the user that you will notify him if you have something new available in the future.

@@ -47,22 +47,23 @@ class GatherBookingInfoResolver(StepResolver):
             chat_history += f"{msg['role']}: {msg['content']}\n"
         return chat_history
 
-    def run(self, step_data: dict, messages: List[str], previous_stes_data: List[Any]) -> str:
-        chat_input = self.build_messages_from_conversation(messages)
-        result = get_completion_from_messages(chat_input)
+    def run(self, step_data: dict, messages: List[Any], previous_stes_data: List[Any]):
 
         chat_history = self.build_chat_history(messages)
         
         info_extractor = InfoExtractorChain()
-        booking_info = info_extractor("", chat_history)
+        booking_info = info_extractor(chat_history)
         
         checkin_date = booking_info["checkin_date"]
         checkout_date = booking_info["checkout_date"]
         num_nights = booking_info["num_nights"]
         num_guests = booking_info["num_guests"]
 
-        if checkin_date == "" or (booking_info["num_nights"] == "" and checkout_date == ""):
-            return result
+        if checkin_date == "" or (num_nights == "" and checkout_date == ""):
+            # Get response message from Assistant
+            chat_input = self.build_messages_from_conversation(messages)
+            assistant_response = get_completion_from_messages(chat_input)
+            return assistant_response
 
         num_nights = int(num_nights)
         if num_nights > 0:
@@ -79,8 +80,6 @@ class GatherBookingInfoResolver(StepResolver):
             "num_nights": num_nights,
             "num_guests": num_guests
         }
-
-        return result
     
     def is_done(self, step_data: dict):
         if "booking_information" not in step_data:

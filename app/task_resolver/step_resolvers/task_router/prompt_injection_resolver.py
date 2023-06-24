@@ -8,7 +8,7 @@ class PromptInjectionResolver(StepResolver):
     def __init__(self):
         pass
 
-    def run(self, step_data: dict, messages: List[str], previous_steps_data: List[Any]) -> str:
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]) -> str:
         pass
         
     def is_done(self, step_data: dict):

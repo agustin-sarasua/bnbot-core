@@ -8,7 +8,7 @@ class StepResolver(ABC):
         pass
     
     @abstractmethod
-    def run(self, step_data: dict, messages: List[str], previous_steps_data: List[Any]):
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
         pass
     
     @abstractmethod

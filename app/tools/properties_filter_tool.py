@@ -17,7 +17,7 @@ from langchain.tools import BaseTool
 from pydantic import BaseModel, BaseSettings, Field
 
 from datetime import datetime, timedelta
-from app.utils import Cache, read_json_from_s3
+from app.utils import Cache, read_json_from_s3, logger
 
 class PropertiesFilterToolSchema(BaseModel):
     checkin_date: str = Field(default="", description="check-in date")
@@ -47,7 +47,6 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
         # available_properties: dict,
         run_manager: Optional[CallbackManagerForToolRun] = None
     ) -> str:
-        """Use the tool."""
         
         if checkin_date == "" or (num_nights == "" and checkout_date == ""):
             return dict()
@@ -56,7 +55,7 @@ class PropertiesFilterTool(BaseTool, BaseSettings):
         if num_nights > 0:
            checkout_date_from_nights = self._calculate_checkout_date(checkin_date, num_nights)
            if checkout_date != checkout_date_from_nights:
-               print("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
+               logger.warn("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
                checkout_date = max(checkout_date, checkout_date_from_nights)
 
         num_guests = int(num_guests)

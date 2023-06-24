@@ -1,7 +1,7 @@
 from app.task_resolver.model import StepResolver
 from app.tools import BookingConfirmationChain
 from app.utils import logger
-from typing import List
+from typing import List, Any
 
 class BookingConfirmationResolver(StepResolver):
 
@@ -24,7 +24,7 @@ class BookingConfirmationResolver(StepResolver):
         return merged_dict
 
 
-    def run(self, step_data: dict, messages: List[str], previous_steps_data: dict) -> str:
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: dict) -> str:
         
         booking_info = self._build_booking_info(previous_steps_data)
         

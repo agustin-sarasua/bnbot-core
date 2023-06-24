@@ -24,8 +24,6 @@ If the year is not specified in the query, assume it is after today, \
 same year or at most next year if the month is before current month.
 Today is {time}.
 
-{query}
-
 Here is the conversation: 
 {chat_history}
 
@@ -49,7 +47,7 @@ class InfoExtractorChain:
         format_instructions =self.output_parser.get_format_instructions()
 
         prompt_template = PromptTemplate(
-            input_variables=["time", "query", "chat_history"], 
+            input_variables=["time", "chat_history"], 
             partial_variables={"format_instructions": format_instructions},
             template=template
         )
@@ -59,28 +57,9 @@ class InfoExtractorChain:
                               verbose=chain_verbose,
                               output_key="booking_information")
 
-    def __call__(self, query, chat_history):
+    def __call__(self, chat_history):
 
         today = datetime.today()
         formatted_date = today.strftime("%d %B %Y")
-        info = self.chain({"time":formatted_date, "query":query,  "chat_history": chat_history})
+        info = self.chain({"time":formatted_date, "chat_history": chat_history})
         return self.output_parser.parse(info["booking_information"])
-    
-
-class InfoExtractorTool(BaseTool):
-    name = "info_extractor"
-    description = "useful for when you need to calculate the check-in, check-out and number of guests from the query and chat_history."
-
-    booking_info_extractor = InfoExtractorChain()
-
-    def _run(
-        self, query: str, chat_history: str, run_manager: Optional[CallbackManagerForToolRun] = None
-    ) -> str:
-        """Use the tool."""
-        return self.booking_info_extractor(query, chat_history)
-
-    async def _arun(
-        self, query: str, chat_history: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
-    ) -> str:
-        """Use the tool asynchronously."""
-        raise NotImplementedError("custom_search does not support async")

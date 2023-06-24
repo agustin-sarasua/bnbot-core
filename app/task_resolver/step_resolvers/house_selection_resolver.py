@@ -20,7 +20,7 @@ class HouseSelectionResolver(StepResolver):
             idx +=1
         return formatted_string
 
-    def run(self, step_data: dict, messages: List[str], previous_steps_data: dict) -> str:
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: dict):
         
         booking_info = previous_steps_data["GATHER_BOOKING_INFO"]["booking_information"]
 
@@ -28,14 +28,14 @@ class HouseSelectionResolver(StepResolver):
         if "properties_available" not in step_data:
             properties_available = property_loader.run(tool_input=booking_info)
             logger.debug(f"{self.__class__.__name__} - Properties available: {properties_available}")
-            step_data["properties_available"]=properties_available
+            step_data["properties_available"] = properties_available
         properties_available = step_data["properties_available"]
 
         if len(properties_available.items()) == 0:
             properties_info = "Unfortunately there are no properties available."
         else:
             properties_info = self._format_json(properties_available)
-        print(properties_info)
+        
         chat_history = self.build_chat_history(messages)
 
         info_extractor = HousePickedExtractorChain()

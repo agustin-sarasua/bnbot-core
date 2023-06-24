@@ -19,7 +19,7 @@ class GatherUserInfoResolver(StepResolver):
             chat_history += f"{msg['role']}: {msg['content']}\n"
         return chat_history
 
-    def run(self, step_data: dict, messages: List[str], previous_steps_data: List[Any]) -> str:
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]) -> str:
 
         chat_history = self.build_chat_history(messages)
         
