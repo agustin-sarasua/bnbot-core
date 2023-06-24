@@ -1,11 +1,11 @@
-from app.task_resolver.model import StepResolver
+from app.task_resolver.task_model import StepResolver
 from typing import List, Any
 from datetime import datetime, timedelta
 
 
 from typing import List, Any
 from datetime import datetime, timedelta
-from app.task_resolver.model import StepResolver
+from app.task_resolver.task_model import StepResolver
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
@@ -20,7 +20,6 @@ from langchain.llms import OpenAI
 
 template="""Given a conversation between a user and an assistant about booking a house for short-term stay. \
 Your job is to infer if the conversation if finished and if the user wants to end the current task he is doing.
-The current task that the user wants to perform is: {current_task}
 
 Here is the conversation: 
 {chat_history}
@@ -28,8 +27,8 @@ Here is the conversation:
 {format_instructions}"""
 
 response_schemas = [
-    ResponseSchema(name="conversation_finished", description="Set True if the conversation between the user and the assistant came to an end. Otherwise set False."),
-    ResponseSchema(name="leave_current_task", description="Set True if the user does not want to perform the current task he is performing. Otherwise set False."),
+    ResponseSchema(name="conversation_finished", type="bool", description="Wether the conversation between the user and the assistant came to an end."),
+    ResponseSchema(name="text", description="Response to the user."),
 ]
 
 
@@ -43,7 +42,7 @@ class ExitTaskChain:
         format_instructions = self.output_parser.get_format_instructions()
 
         prompt_template = PromptTemplate(
-            input_variables=["chat_history", "current_task"], 
+            input_variables=["chat_history"], 
             partial_variables={"format_instructions": format_instructions},
             template=template
         )
@@ -55,16 +54,34 @@ class ExitTaskChain:
 
     def __call__(self, chat_history, current_task):
 
-        info = self.chain({"chat_history": chat_history, "current_task": current_task})
+        info = self.chain({"chat_history": chat_history})
         return self.output_parser.parse(info["result"])
+
 
 class ExitTaskResolver(StepResolver):
 
     def __init__(self):
+        self.exit_task_chain = ExitTaskChain()
         pass
 
-    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]) -> str:
-        pass
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
+        chat_history = self.build_chat_history(messages)
+
+        current_task = step_data["current_task_name"]
+        exit_result = self.exit_task_chain(chat_history, current_task)
+
+        step_data["result"] = exit_result
+        if ("conversation_finished" in exit_result and  
+            exit_result["conversation_finished"] != "" and 
+            exit_result["conversation_finished"] == True):
+            # TODO what to respond
+            return exit_result["text"]
         
     def is_done(self, step_data: dict):
-        return True
+        return (
+            "result" in step_data and  
+            
+            "conversation_finished" in step_data["result"] != "" and 
+            step_data["result"]["conversation_finished"] is not None
+        )
+            

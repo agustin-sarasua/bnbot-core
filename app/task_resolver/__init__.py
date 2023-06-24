@@ -1,4 +1,4 @@
-from app.task_resolver.model import Task, StepResolver, Step
+from app.task_resolver.task_model import Task, StepResolver, Step
 from app.task_resolver.step_resolvers.gather_booking_info_resolver import GatherBookingInfoResolver
 from app.task_resolver.step_resolvers.house_selection_resolver import HouseSelectionResolver
 from app.task_resolver.step_resolvers.gather_user_info_resolver import GatherUserInfoResolver

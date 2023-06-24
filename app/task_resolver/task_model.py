@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from typing import List, Any
 from app.utils import logger
 
-
 class StepResolver(ABC):
     def __init__(self):
         pass
@@ -19,7 +18,7 @@ class StepResolver(ABC):
         chat_history = ""
         for msg in messages:
             chat_history += f"{msg['role']}: {msg['content']}\n"
-        return chat_history
+        return chat_history[:-1]
 
 class Step:
     name: str
@@ -28,6 +27,7 @@ class Step:
     reply_when_done: bool
     resolver: StepResolver
     
+
     def __init__(self, name, resolver, reply_when_done=True):
         self.name = name
         self.status = "TODO"
@@ -86,6 +86,7 @@ class Task:
                 continue
             else: 
                 logger.debug(f"Task: {self.name} - Resolving Step: {step.name}")
+                step.data["current_task_name"] = self.name
                 response = step.resolve(conversation_messages, previous_steps_data)
                 if self.steps[-1].name == step.name:
                     logger.debug(f"Task: {self.name} - Reached Final Step")
@@ -94,4 +95,3 @@ class Task:
                     logger.debug(f"Task: {self.name} - Step : {step.name} - Not replying, calling recursive.")
                     return self.run(conversation_messages)
                 return response
-                    

@@ -1,6 +1,6 @@
 from typing import List, Any
 from datetime import datetime, timedelta
-from app.task_resolver.model import StepResolver
+from app.task_resolver.task_model import StepResolver
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
@@ -66,7 +66,7 @@ class TaskIdentifierResolver(StepResolver):
     def __init__(self):
         pass
 
-    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]) -> str:
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
         chat_history = self.build_chat_history(messages)
 
         task_extractor = TaskExtractorChain()

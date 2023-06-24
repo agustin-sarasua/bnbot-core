@@ -1,4 +1,4 @@
-from app.task_resolver.model import StepResolver
+from app.task_resolver.task_model import StepResolver
 from typing import List, Any
 from app.utils import get_completion_from_messages
 from app.tools import UserInformationExtractorChain

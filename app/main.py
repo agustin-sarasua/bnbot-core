@@ -61,7 +61,7 @@ def main_flow(message: str, customer_number: str):
             # Here I know already that he wants to make a reservation.
             task = create_task(task_result["task_id"])
             conversation.task = task
-            response = task.run(conversation.get_messages())
+            response = task.run(conversation.get_messages(), )
             # if not task.steps[-1].reply_when_done:
             #     return main_flow()                
             conversation.add_assistant_message(response)
