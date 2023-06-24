@@ -26,9 +26,6 @@ REMEMBER: Only asked for the information needed, nothing else."""
 
 class GatherBookingInfoResolver(StepResolver):
 
-    def __init__(self):
-        pass
-
     def _calculate_checkout_date(self, checkin_date, num_nights):
         checkin_datetime = datetime.strptime(checkin_date, '%Y-%m-%d')
         checkout_datetime = checkin_datetime + timedelta(days=num_nights)
@@ -47,7 +44,12 @@ class GatherBookingInfoResolver(StepResolver):
             chat_history += f"{msg['role']}: {msg['content']}\n"
         return chat_history
 
-    def run(self, step_data: dict, messages: List[Any], previous_stes_data: List[Any]):
+    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
+        
+        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
+        if exit_task_info["conversation_finished"] == True:
+            logger.debug("Conversation finished. Responding None")
+            return None
 
         chat_history = self.build_chat_history(messages)
         

@@ -60,24 +60,23 @@ class ExitTaskChain:
 
 class ExitTaskResolver(StepResolver):
 
-    def __init__(self):
-        self.exit_task_chain = ExitTaskChain()
-        pass
+    exit_task_chain: ExitTaskChain = ExitTaskChain()
 
     def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
         chat_history = self.build_chat_history(messages)
 
-        current_task = step_data["current_task_name"]
-        exit_result = self.exit_task_chain(chat_history, current_task)
+        # current_task = step_data["current_task_name"]
+        exit_result = self.exit_task_chain(chat_history, "")
 
         step_data["result"] = exit_result
         if ("conversation_finished" in exit_result and  
             exit_result["conversation_finished"] != "" and 
             exit_result["conversation_finished"] == True):
             # TODO what to respond
-            return exit_result["text"]
+            return None
         
     def is_done(self, step_data: dict):
+        # Force to execute this step every time.
         return (
             "result" in step_data and  
             

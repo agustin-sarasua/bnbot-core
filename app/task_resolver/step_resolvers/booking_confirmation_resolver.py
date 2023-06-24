@@ -4,9 +4,6 @@ from app.utils import logger
 from typing import List, Any
 
 class BookingConfirmationResolver(StepResolver):
-
-    def __init__(self):
-        pass
     
     def build_chat_history(self, messages):
         chat_history = ""
@@ -26,8 +23,12 @@ class BookingConfirmationResolver(StepResolver):
 
     def run(self, step_data: dict, messages: List[Any], previous_steps_data: dict) -> str:
         
-        booking_info = self._build_booking_info(previous_steps_data)
+        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
+        if exit_task_info["conversation_finished"] == True:
+            logger.debug("Conversation finished. Responding None")
+            return None
         
+        booking_info = self._build_booking_info(previous_steps_data)
         
         step_chat_history = []    
         if "step_chat_history" in step_data:

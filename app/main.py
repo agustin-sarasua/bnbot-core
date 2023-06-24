@@ -46,7 +46,7 @@ def create_task(task_name):
     else:
         return create_task_router_task()
 
-def main_flow(message: str, customer_number: str): 
+def main_flow(message: str, customer_number: str) -> str: 
 
     if message == "exit":
         system.save_conversation(Conversation(customer_number, create_task_router_task()))
@@ -57,7 +57,12 @@ def main_flow(message: str, customer_number: str):
     logger.debug(f"Conversation: {conversation.get_messages()}")
     task_result = conversation.task.run(conversation.get_messages())
     if conversation.task.name == "TASK_ROUTER_TASK":
-        if task_result["task_id"] != "OTHER":
+        if task_result["task_id"] == "CONVERSATION_DONE":
+            # Reset Conversation
+            logger.debug(f"Conversation finished, reseting conversation.")
+            system.save_conversation(Conversation(customer_number, create_task_router_task()))
+            return None
+        elif task_result["task_id"] != "OTHER":
             # Here I know already that he wants to make a reservation.
             task = create_task(task_result["task_id"])
             conversation.task = task
@@ -104,7 +109,8 @@ def handler(event, context):
             customer_number = body['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
 
             response = main_flow(message=text_body, customer_number=customer_number)
-            send_response_to_client(customer_number, response)
+            if response is not None and response != "":
+                send_response_to_client(customer_number, response)
 
             response = {
                 "statusCode": 200,

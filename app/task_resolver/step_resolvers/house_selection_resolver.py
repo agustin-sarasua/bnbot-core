@@ -4,9 +4,6 @@ from app.tools import PropertiesFilterTool, HousePickedExtractorChain
 from app.utils import logger
 
 class HouseSelectionResolver(StepResolver):
-
-    def __init__(self):
-        pass
     
     def _format_json(self, properties):
         formatted_string = ''
@@ -21,7 +18,12 @@ class HouseSelectionResolver(StepResolver):
         return formatted_string
 
     def run(self, step_data: dict, messages: List[Any], previous_steps_data: dict):
-        
+
+        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
+        if exit_task_info["conversation_finished"] == True:
+            logger.debug("Conversation finished. Responding None")
+            return None
+
         booking_info = previous_steps_data["GATHER_BOOKING_INFO"]["booking_information"]
 
         property_loader = PropertiesFilterTool()

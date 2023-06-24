@@ -63,10 +63,17 @@ class TaskExtractorChain:
 
 class TaskIdentifierResolver(StepResolver):
 
-    def __init__(self):
-        pass
-
     def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
+        
+        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
+        if exit_task_info["conversation_finished"] == True:
+            task_info = {
+                "task_id": "CONVERSATION_DONE",
+                "result": ""
+            }
+            step_data["task_info"] = task_info
+            return task_info
+
         chat_history = self.build_chat_history(messages)
 
         task_extractor = TaskExtractorChain()

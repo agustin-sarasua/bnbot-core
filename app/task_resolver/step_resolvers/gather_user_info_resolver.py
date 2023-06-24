@@ -1,6 +1,6 @@
 from app.task_resolver.task_model import StepResolver
 from typing import List, Any
-from app.utils import get_completion_from_messages
+from app.utils import get_completion_from_messages, logger
 from app.tools import UserInformationExtractorChain
 from datetime import datetime, timedelta
 
@@ -10,9 +10,6 @@ delimiter = "####"
 
 class GatherUserInfoResolver(StepResolver):
 
-    def __init__(self):
-        pass
-
     def build_chat_history(self, messages):
         chat_history = ""
         for msg in messages:
@@ -20,6 +17,11 @@ class GatherUserInfoResolver(StepResolver):
         return chat_history
 
     def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]) -> str:
+
+        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
+        if exit_task_info["conversation_finished"] == True:
+            logger.debug("Conversation finished. Responding None")
+            return None
 
         chat_history = self.build_chat_history(messages)
         
