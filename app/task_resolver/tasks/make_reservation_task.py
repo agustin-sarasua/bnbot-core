@@ -4,7 +4,7 @@ from app.task_resolver import GatherBookingInfoResolver, HouseSelectionResolver,
 def create_make_reservation_task():
     exit_task_step = Step("EXIT_TASK_STEP", ExitTaskResolver(), force_execution=True, reply_when_done=False)
     gather_booking_info_step = Step("GATHER_BOOKING_INFO", GatherBookingInfoResolver(), reply_when_done=False)
-    house_selection_step = Step("HOUSE_SELECTION", HouseSelectionResolver())
+    house_selection_step = Step("HOUSE_SELECTION", HouseSelectionResolver(), reply_when_done=False)
     gather_user_info_step = Step("GATHER_USER_INFO", GatherUserInfoResolver(), reply_when_done=False)
     booking_confirmation_step = Step("BOOKING_CONFIRMATION", BookingConfirmationResolver())
     

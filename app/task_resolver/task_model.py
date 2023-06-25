@@ -87,9 +87,9 @@ class Task:
             if step.force_execution:
                 logger.debug(f"Task: {self.name} - Forced Step Execution {step.name}")
                 response = step.resolve(conversation_messages, previous_steps_data)
-                if step.is_done() and step.reply_when_done:
-                    # Respond to the user when the task finished with the "text" in response.
-                    return response
+                if step.is_done() and not step.reply_when_done:
+                    continue
+                return response
             else:
                 if step.is_done():
                     logger.debug(f"Task: {self.name} - Skipping Step {step.name} - it is DONE")
@@ -100,10 +100,3 @@ class Task:
                     if step.is_done() and not step.reply_when_done:
                         continue
                     return response
-                    # if self.steps[-1].name == step.name:
-                    #     logger.debug(f"Task: {self.name} - Reached Final Step")
-                    #     return response
-                    # if step.is_done() and not step.reply_when_done:
-                    #     logger.debug(f"Task: {self.name} - Step : {step.name} - Not replying, calling recursive.")
-                    #     return self.run(conversation_messages)
-                    # return response

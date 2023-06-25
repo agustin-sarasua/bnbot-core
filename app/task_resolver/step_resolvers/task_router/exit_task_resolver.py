@@ -19,15 +19,21 @@ from app.utils import chain_verbose
 from langchain.llms import OpenAI
 
 template="""Given a conversation between a user and an assistant about booking a house for short-term stay. \
-Your job is to infer if the conversation if finished and if the user wants to end the current task he is doing.
+Your job is to decide if the conversation came to an end already.
 
-Here is the conversation: 
-{chat_history}
+Follow these Steps before responding to the user new message:
 
-{format_instructions}"""
+Step 1: Decide if the conversation came to an end already.
+
+Step 2: Decide if the user wants to finish the task he is currently doing.
+
+{format_instructions}
+
+Current conversation: 
+{chat_history}"""
 
 response_schemas = [
-    ResponseSchema(name="conversation_finished", type="bool", description="Wether the conversation between the user and the assistant came to an end."),
+    ResponseSchema(name="conversation_finished", type="bool", description="true if the conversation between the user and the assistant came to an end, otherwise false."),
     ResponseSchema(name="text", description="Response to the user."),
 ]
 
@@ -36,7 +42,7 @@ class ExitTaskChain:
 
     def __init__(self):
 
-        llm = OpenAI(temperature=0.)
+        llm = OpenAI(model_name="text-davinci-003", temperature=0.)
         
         self.output_parser = StructuredOutputParser.from_response_schemas(response_schemas)
         format_instructions = self.output_parser.get_format_instructions()

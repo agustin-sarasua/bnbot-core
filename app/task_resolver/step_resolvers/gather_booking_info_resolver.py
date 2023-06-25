@@ -61,10 +61,11 @@ class GatherBookingInfoResolver(StepResolver):
         num_nights = booking_info["num_nights"]
         num_guests = booking_info["num_guests"]
 
+        chat_input = self.build_messages_from_conversation(messages)
+        assistant_response = get_completion_from_messages(chat_input)
+        
         if checkin_date == "" or (num_nights == "" and checkout_date == ""):
             # Get response message from Assistant
-            chat_input = self.build_messages_from_conversation(messages)
-            assistant_response = get_completion_from_messages(chat_input)
             return assistant_response
 
         num_nights = int(num_nights)
@@ -82,6 +83,7 @@ class GatherBookingInfoResolver(StepResolver):
             "num_nights": num_nights,
             "num_guests": num_guests
         }
+        return assistant_response
     
     def is_done(self, step_data: dict):
         if "booking_information" not in step_data:

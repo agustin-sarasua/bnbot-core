@@ -12,24 +12,6 @@ class TestExitTaskResolver(unittest.TestCase):
     def setUp(self):
         _ = load_dotenv(find_dotenv(filename="../.env")) # read local .env file
         openai.api_key = "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" #= os.environ['OPENAI_API_KEY']
-
-    def test_run_exit_task_resolver(self):
-        # Arrange
-        resolver = ExitTaskResolver()
-        step_data = {"current_task_name": "MAKE_RESERVATION_TASK"}
-        messages = [
-            {"role":"user", "content": "Hola"},
-            {"role":"assistant", "content": "Hola, ¿en qué puedo ayudarte?"},
-            {"role":"user", "content": "Me gustaria reservar una casa para el finde"}
-        ]
-        previous_steps_data = []
-
-        # Act
-        resolver.run(step_data, messages, previous_steps_data)
-
-        # Assert
-        self.assertIsInstance(step_data["result"], dict)
-        self.assertEqual(step_data["result"]["conversation_finished"], False)
     
     def test_run_exit_task_resolver_1(self):
         # Arrange
@@ -59,6 +41,47 @@ class TestExitTaskResolver(unittest.TestCase):
         # Assert
         self.assertIsInstance(step_data["result"], dict)
         self.assertEqual(step_data["result"]["conversation_finished"], True)
+
+
+    def test_run_exit_task_resolver_false(self):
+
+        conversations = [
+            [
+                {"role":"user", "content": "Hola"},
+                {"role":"assistant", "content": "Hola, ¿en qué puedo ayudarte?"},
+                {"role":"user", "content": "Me gustaria reservar una casa para el finde"}
+            ],
+            [
+                {"role": "user", "content": "Hola"},
+                {"role": "assistant", "content": "Hola, ¿en qué puedo ayudarte?"},
+                {"role": "user", "content": "Me gustaría reservar una casa"},
+                {"role": "assistant", "content": "¡Perfecto! Para poder ayudarte a reservar una casa, necesito que me proporciones algunos detalles. ¿Cuál es la fecha de check-in que tienes en mente?"},
+                {"role": "user", "content": "Es pra el martes que viene por 2 noches"}
+            ],
+            [
+                {"role": "user", "content": "Hola"},
+                {"role": "assistant", "content": "Hola, ¿en qué puedo ayudarte?"},
+                {"role": "user", "content": "Me gustaría reservar una casa"},
+                {"role": "assistant", "content": "¡Perfecto! Para poder ayudarte a reservar una casa, necesito que me proporciones algunos detalles. ¿Cuál es la fecha de check-in que tienes en mente?"},
+                {"role": "user", "content": "Seria para el viernes que viene por 2 noches"},
+                {"role": "assistant", "content": "Entendido, ¿y cuál es la fecha de check-out?"},
+                {"role": "user", "content": "El domingo"}
+            ]
+        ]
+        resolver = ExitTaskResolver()
+        step_data = {"current_task_name": "MAKE_RESERVATION_TASK"}
+        for idx, conv in enumerate(conversations):
+            print(f"Running test {idx}")
+            previous_steps_data = []
+            
+            # Act
+            resolver.run(step_data, conv, previous_steps_data)
+
+            # Assert
+            self.assertIsInstance(step_data["result"], dict)
+            self.assertEqual(step_data["result"]["conversation_finished"], False)
+
+
 
 
 if __name__ == '__main__':

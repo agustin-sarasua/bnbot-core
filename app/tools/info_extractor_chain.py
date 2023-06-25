@@ -60,6 +60,6 @@ class InfoExtractorChain:
     def __call__(self, chat_history):
 
         today = datetime.today()
-        formatted_date = today.strftime("%d %B %Y")
+        formatted_date = today.strftime("%A, %d %B %Y")
         info = self.chain({"time":formatted_date, "chat_history": chat_history})
         return self.output_parser.parse(info["booking_information"])

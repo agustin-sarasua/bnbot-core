@@ -1,24 +1,25 @@
-import json
-import requests
-
 import os
+from dotenv import load_dotenv, find_dotenv
+_ = load_dotenv(find_dotenv()) # read local .env file
+from fastapi import FastAPI, Form, Depends
 import openai
+openai.api_key = os.environ.get('OPENAI_API_KEY')
+
+
 from app.system import System
 from app.system import Conversation
 from app.system import System
 from app.task_resolver.tasks import create_make_reservation_task, create_task_router_task
 
-from app.utils import logger, decode_base64
+from app.utils import logger
 from app.integrations import TwilioMessagingAPI
 
-
-openai.api_key = os.environ.get('OPEN_AI_TOKEN')
-whatsapp_token = os.environ.get('WHATSAPP_TOKEN')
-whatsapp_url = os.environ.get('WHATSAPP_URL')
 
 account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_number = os.environ.get('TWILIO_NUMBER')
+
+app = FastAPI()
 
 system = System()
 twilio_integration = TwilioMessagingAPI(account_sid, auth_token, twilio_number)
@@ -66,43 +67,54 @@ def main_flow(message: str, customer_number: str) -> str:
         return task_result
 
 
-def handler(event, context):
-    customer_number = None
+# def handler(event, context):
+#     customer_number = None
+#     try:
+#             # Parse the JSON body
+#         body = json.loads(event['body'])
+        
+#         if 'isBase64Encoded' in event and event['isBase64Encoded']:
+#             body = decode_base64(body)
+
+#         request = twilio_integration.parse_request(body)
+#         customer_number = request["from"]
+
+#         response = main_flow(message=request["message"], customer_number=customer_number)
+#         if response is not None and response != "":
+#             twilio_integration.send_message(request["to"], response)
+
+#         response = {"statusCode": 200}
+#         return response
+        
+#     except Exception as e:
+#         # Exception handling and returning a 200 OK response
+#         logger.error(f"Exception {str(e)}")
+#         if customer_number is not None:
+#             twilio_integration.send_message(customer_number, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
+#         response = {"statusCode": 200}
+#         return response
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World 2"}    
+
+
+@app.post("/message")
+async def reply(Body: str = Form(), To: str = Form(), From: str = Form(), ProfileName: str = Form()):
+    # Call the OpenAI API to generate text with GPT-3.5
     try:
-        logger.debug(f"Event: {event}")
 
-        if event["queryStringParameters"] is not None and 'hub.challenge' in event["queryStringParameters"]:
-            verify_token = event['queryStringParameters']['hub.verify_token']
-            assert verify_token == "holacarola"
-            challenge =  event['queryStringParameters']['hub.challenge']
+        response = main_flow(message=Body, customer_number=From)
+        if response is not None and response != "":
+            twilio_integration.send_message(From, response)
 
-            response = {
-                "statusCode": 200,
-                "body": challenge
-            }
-            return response
-        else:
-
-            # Parse the JSON body
-            body = json.loads(event['body'])
-            
-            if 'isBase64Encoded' in event and event['isBase64Encoded']:
-                body = decode_base64(body)
-
-            request = twilio_integration.parse_request(body)
-            customer_number = request["from"]
-
-            response = main_flow(message=request["message"], customer_number=customer_number)
-            if response is not None and response != "":
-                twilio_integration.send_message(request["to"], response)
-
-            response = {"statusCode": 200}
-            return response
+        response = {"statusCode": 200}
+        return response
         
     except Exception as e:
         # Exception handling and returning a 200 OK response
         logger.error(f"Exception {str(e)}")
-        if customer_number is not None:
-            twilio_integration.send_message(customer_number, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
+        if From is not None:
+            twilio_integration.send_message(From, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
         response = {"statusCode": 200}
         return response
