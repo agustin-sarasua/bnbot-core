@@ -8,37 +8,20 @@ from app.system import Conversation
 from app.system import System
 from app.task_resolver.tasks import create_make_reservation_task, create_task_router_task
 
-from app.utils import logger
+from app.utils import logger, decode_base64
+from app.integrations import TwilioMessagingAPI
 
 
 openai.api_key = os.environ.get('OPEN_AI_TOKEN')
 whatsapp_token = os.environ.get('WHATSAPP_TOKEN')
 whatsapp_url = os.environ.get('WHATSAPP_URL')
 
-system = System()
+account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
+auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
+twilio_number = os.environ.get('TWILIO_NUMBER')
 
-def send_response_to_client(client_number="59899513718", message="hola"):
-    url = whatsapp_url
-    headers = {
-        'Authorization': f"Bearer {whatsapp_token}",
-        'Content-Type': 'application/json'
-    }
-    data = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": client_number,
-        "type": "text",
-        "text": { 
-            "preview_url": False,
-            "body": message
-        }
-    }
-    logger.debug(f"Replying to customer: {message}")
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    
-    response_data = response.json()
-    formatted_response = json.dumps(response_data, indent=4)
-    logger.debug(f"Response from WhatsApp API: {formatted_response}")
+system = System()
+twilio_integration = TwilioMessagingAPI(account_sid, auth_token, twilio_number)
 
 def create_task(task_name):
     if task_name == "MAKE_RESERVATION_TASK":
@@ -102,29 +85,24 @@ def handler(event, context):
 
             # Parse the JSON body
             body = json.loads(event['body'])
+            
+            if 'isBase64Encoded' in event and event['isBase64Encoded']:
+                body = decode_base64(body)
 
-            # Extract the text body, profile name, and wa_id
-            text_body = body['entry'][0]['changes'][0]['value']['messages'][0]['text']['body']
-            profile_name = body['entry'][0]['changes'][0]['value']['contacts'][0]['profile']['name']
-            customer_number = body['entry'][0]['changes'][0]['value']['contacts'][0]['wa_id']
+            request = twilio_integration.parse_request(body)
+            customer_number = request["from"]
 
-            response = main_flow(message=text_body, customer_number=customer_number)
+            response = main_flow(message=request["message"], customer_number=customer_number)
             if response is not None and response != "":
-                send_response_to_client(customer_number, response)
+                twilio_integration.send_message(request["to"], response)
 
-            response = {
-                "statusCode": 200,
-                "body": "hola"
-            }
+            response = {"statusCode": 200}
             return response
         
     except Exception as e:
         # Exception handling and returning a 200 OK response
         logger.error(f"Exception {str(e)}")
         if customer_number is not None:
-            send_response_to_client(customer_number, "Ups... Tuvimos un problema procesando tu mensaje. Por favor contactate directo con Gonzalo: 099386573 ")
-        response = {
-                "statusCode": 200,
-                "body": "hola"
-        }
+            twilio_integration.send_message(customer_number, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
+        response = {"statusCode": 200}
         return response
