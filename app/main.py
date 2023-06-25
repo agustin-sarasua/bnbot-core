@@ -32,6 +32,10 @@ def create_task(task_name):
 
 def main_flow(message: str, customer_number: str) -> str: 
 
+    def message_preprocessing(msg: str) -> str:
+        return msg.replace("\n", "  ")
+
+    message = message_preprocessing(message)
     if message == "exit":
         system.save_conversation(Conversation(customer_number, create_task_router_task()))
         return "Conversacion reiniciada. Puedes comenzar de nuevo!"
@@ -53,16 +57,16 @@ def main_flow(message: str, customer_number: str) -> str:
             response = task.run(conversation.get_messages(), )
             # if not task.steps[-1].reply_when_done:
             #     return main_flow()                
-            conversation.add_assistant_message(response)
+            conversation.add_assistant_message(message_preprocessing(response))
             system.save_conversation(conversation)
             return response
         else:
-            conversation.add_assistant_message(task_result["text"])
+            conversation.add_assistant_message(message_preprocessing(task_result["text"]))
             system.save_conversation(conversation)
             return task_result["text"]
     else:
         if task_result is not None:
-            conversation.add_assistant_message(task_result)
+            conversation.add_assistant_message(message_preprocessing(task_result))
             system.save_conversation(conversation)
         return task_result
 

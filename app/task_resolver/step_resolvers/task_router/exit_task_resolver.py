@@ -18,14 +18,20 @@ from langchain.chat_models import ChatOpenAI
 from app.utils import chain_verbose
 from langchain.llms import OpenAI
 
+# BOOKING_CONFIRMATION_STEP:
+# HOUSE_SELECTION_STEP:
+
 template="""Given a conversation between a user and an assistant about booking a house for short-term stay. \
 Your job is to decide if the conversation came to an end already.
 
-Follow these Steps before responding to the user new message:
+A conversation came to an end in the following cases:
+1. After the user gets a confirmation from the assistant that the reservation in booked for some time and that an email will be sent to the email provided by her.
+2. When the user decides not to book a reservation after the assistant asked to confirm the booking.
+3. When there are no properties available for the user's booking requirements and the user does not want to pick other dates for the reservation.
+4. When the user is making a reservation but suddenly wants to perform some other task not related with making reservations.
+5. When the user explicitly ask to end the conversation.
 
-Step 1: Decide if the conversation came to an end already.
-
-Step 2: Decide if the user wants to finish the task he is currently doing.
+On every other case the conversation is still active.
 
 {format_instructions}
 
@@ -36,7 +42,6 @@ response_schemas = [
     ResponseSchema(name="conversation_finished", type="bool", description="true if the conversation between the user and the assistant came to an end, otherwise false."),
     ResponseSchema(name="text", description="Response to the user."),
 ]
-
 
 class ExitTaskChain:
 
