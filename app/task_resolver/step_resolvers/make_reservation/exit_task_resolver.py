@@ -1,7 +1,6 @@
 from app.task_resolver.engine import StepResolver, Message
 
 from typing import List, Any
-from app.task_resolver.engine import StepResolver
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 

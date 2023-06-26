@@ -1,6 +1,5 @@
 from typing import List, Any
-from datetime import datetime, timedelta
-from app.task_resolver.task_model import StepResolver
+from app.task_resolver.engine import StepResolver, StepData, Message
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
@@ -63,16 +62,17 @@ class TaskExtractorChain:
 
 class TaskIdentifierResolver(StepResolver):
 
-    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
+    def run(self, messages: List[Message], previous_steps_data: List[Any]):
         
-        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
-        if exit_task_info["conversation_finished"] == True:
-            task_info = {
-                "task_id": "CONVERSATION_DONE",
-                "result": ""
-            }
-            step_data["task_info"] = task_info
-            return task_info
+        # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
+        
+        # if exit_task_step_data.resolver_data["conversation_finished"] == True:
+        #     task_info = {
+        #         "task_id": "CONVERSATION_DONE",
+        #         "result": ""
+        #     }
+        #     self.data["task_info"] = task_info
+        #     return task_info
 
         chat_history = self.build_chat_history(messages)
 
@@ -80,14 +80,14 @@ class TaskIdentifierResolver(StepResolver):
         task_info = task_extractor(chat_history)
 
         if task_info["task_id"] != "":
-            step_data["task_info"] = task_info
+            self.data["task_info"] = task_info
 
         return task_info
         
-    def is_done(self, step_data: dict):
-        if "task_info" not in step_data:
+    def is_done(self):
+        if "task_info" not in self.data:
             return False
          
-        return (step_data["task_info"]["task_id"] != "" and 
-                step_data["task_info"]["task_id"] is not None and 
-                step_data["task_info"]["task_id"] != "OTHER")
+        return (self.data["task_info"]["task_id"] != "" and 
+                self.data["task_info"]["task_id"] is not None and 
+                self.data["task_info"]["task_id"] != "OTHER")

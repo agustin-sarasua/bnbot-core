@@ -1,4 +1,4 @@
-from app.task_resolver.task_model import StepResolver
+from app.task_resolver.engine import StepResolver, StepData, Message
 from app.utils import logger
 from app.utils import get_completion_from_messages
 from app.tools import InfoExtractorChain
@@ -32,24 +32,18 @@ class GatherBookingInfoResolver(StepResolver):
         checkout_date = checkout_datetime.strftime('%Y-%m-%d')
         return checkout_date
     
-    def build_messages_from_conversation(self, conversation):
-        messages = [{'role':'system', 'content': system_message}]
-        for msg in conversation:
-            messages.append(msg)
-        return messages
-    
-    def build_chat_history(self, messages):
-        chat_history = ""
+    def build_messages_from_conversation(self, messages: List[Message]):
+        result = [{'role':'system', 'content': system_message}]
         for msg in messages:
-            chat_history += f"{msg['role']}: {msg['content']}\n"
-        return chat_history
-
-    def run(self, step_data: dict, messages: List[Any], previous_steps_data: List[Any]):
+            result.append({'role': msg.role, 'content': msg.text})
+        return result
+    
+    def run(self, messages: List[Message], previous_steps_data: dict):
         
-        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
-        if exit_task_info["conversation_finished"] == True:
-            logger.debug("Conversation finished. Responding None")
-            return None
+        # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
+        # if exit_task_step_data.resolver_data["conversation_finished"] == True:
+        #     logger.debug("Conversation finished. Responding None")
+        #     return None
 
         chat_history = self.build_chat_history(messages)
         
@@ -77,7 +71,7 @@ class GatherBookingInfoResolver(StepResolver):
 
         num_guests = int(num_guests)
 
-        step_data["booking_information"] = {
+        self.data["booking_information"] = {
             "checkin_date": checkin_date,
             "checkout_date": checkout_date,
             "num_nights": num_nights,
@@ -85,11 +79,11 @@ class GatherBookingInfoResolver(StepResolver):
         }
         return assistant_response
     
-    def is_done(self, step_data: dict):
-        if "booking_information" not in step_data:
+    def is_done(self):
+        if "booking_information" not in self.data:
             return False
         
-        booking_information = step_data["booking_information"]
+        booking_information = self.data["booking_information"]
 
         return (booking_information["checkin_date"] != "" and 
                 booking_information["checkout_date"] != "" and 

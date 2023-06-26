@@ -54,9 +54,7 @@ def main_flow(message: str, customer_number: str) -> str:
             # Here I know already that he wants to make a reservation.
             task = create_task(task_result["task_id"])
             conversation.task = task
-            response = task.run(conversation.get_messages(), )
-            # if not task.steps[-1].reply_when_done:
-            #     return main_flow()                
+            response = task.run(conversation.get_messages())             
             conversation.add_assistant_message(message_preprocessing(response))
             system.save_conversation(conversation)
             return response
@@ -70,33 +68,6 @@ def main_flow(message: str, customer_number: str) -> str:
             system.save_conversation(conversation)
         return task_result
 
-
-# def handler(event, context):
-#     customer_number = None
-#     try:
-#             # Parse the JSON body
-#         body = json.loads(event['body'])
-        
-#         if 'isBase64Encoded' in event and event['isBase64Encoded']:
-#             body = decode_base64(body)
-
-#         request = twilio_integration.parse_request(body)
-#         customer_number = request["from"]
-
-#         response = main_flow(message=request["message"], customer_number=customer_number)
-#         if response is not None and response != "":
-#             twilio_integration.send_message(request["to"], response)
-
-#         response = {"statusCode": 200}
-#         return response
-        
-#     except Exception as e:
-#         # Exception handling and returning a 200 OK response
-#         logger.error(f"Exception {str(e)}")
-#         if customer_number is not None:
-#             twilio_integration.send_message(customer_number, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
-#         response = {"statusCode": 200}
-#         return response
 
 @app.get("/")
 async def root():

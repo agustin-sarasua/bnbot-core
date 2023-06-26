@@ -1,4 +1,5 @@
-from app.task_resolver.task_model import StepResolver
+from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepData
 from typing import List, Any
 from app.tools import PropertiesFilterTool, HousePickedExtractorChain
 from app.utils import logger
@@ -17,21 +18,23 @@ class HouseSelectionResolver(StepResolver):
             idx +=1
         return formatted_string
 
-    def run(self, step_data: dict, messages: List[Any], previous_steps_data: dict):
+    def run(self, messages: List[Message], previous_steps_data: dict):
 
-        exit_task_info = previous_steps_data["EXIT_TASK_STEP"]["result"]
-        if exit_task_info["conversation_finished"] == True:
-            logger.debug("Conversation finished. Responding None")
-            return None
+        # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
+        # if exit_task_step_data.resolver_data["conversation_finished"] == True:
+        #     logger.debug("Conversation finished. Responding None")
+        #     return None
 
-        booking_info = previous_steps_data["GATHER_BOOKING_INFO"]["booking_information"]
+        gather_booking_info_step_data: StepData = previous_steps_data["GATHER_BOOKING_INFO"]
+        booking_info = gather_booking_info_step_data.resolver_data["booking_information"]
 
         property_loader = PropertiesFilterTool()
-        if "properties_available" not in step_data:
+        if "properties_available" not in self.data:
             properties_available = property_loader.run(tool_input=booking_info)
             logger.debug(f"{self.__class__.__name__} - Properties available: {properties_available}")
-            step_data["properties_available"] = properties_available
-        properties_available = step_data["properties_available"]
+            self.data["properties_available"] = properties_available
+
+        properties_available = self.data["properties_available"]
 
         if len(properties_available.items()) == 0:
             properties_info = "Unfortunately there are no properties available."
@@ -44,16 +47,17 @@ class HouseSelectionResolver(StepResolver):
         house_info = info_extractor(chat_history, properties_info)
 
         if "property_id" in house_info and  house_info["property_id"] is not None and house_info["property_id"] != "":
-            step_data["property_picked_info"] = {
+            self.data["property_picked_info"] = {
                 "property_id": house_info["property_id"],
-                "price_per_night": properties_available[house_info["property_id"]]["price"],
+                "price_per_night": f"{properties_available[house_info['property_id']]['currency']} {float(properties_available[house_info['property_id']]['price'])}",
                 "total_price": f"{properties_available[house_info['property_id']]['currency']} {float(properties_available[house_info['property_id']]['price']) * float(booking_info['num_nights'])}"
             }
         return house_info["text"]
     
-    def is_done(self, step_data: dict):
-        if "property_picked_info" not in step_data:
+    def is_done(self):
+        if "property_picked_info" not in self.data:
             return False
         
         # TODO validate that the property_picked is valid agains the properties_available.
-        return (step_data["property_picked_info"]["property_id"] != "" and step_data["property_picked_info"]["property_id"] is not None)
+        return (self.data["property_picked_info"]["property_id"] != "" and 
+                self.data["property_picked_info"]["property_id"] is not None)

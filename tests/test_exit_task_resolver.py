@@ -1,9 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
-from typing import List, Any, Dict
-from app.task_resolver import ExitTaskResolver
+from app.task_resolver.engine import ExitTaskResolver, Message
 
-import os
 import openai
 from dotenv import load_dotenv, find_dotenv
 
@@ -16,31 +14,29 @@ class TestExitTaskResolver(unittest.TestCase):
     def test_run_exit_task_resolver_1(self):
         # Arrange
         resolver = ExitTaskResolver()
-        step_data = {"current_task_name": "MAKE_RESERVATION_TASK"}
         messages = [
-            {"role": "user", "content": "Hola"},
-            {"role": "assistant", "content": "Hola, ¿en qué puedo ayudarte?"},
-            {"role": "user", "content": "Quiero reservar una casa para el fin de semana para 6 personas."},
-            {"role": "assistant", "content": """¡Hola! Tenemos una variedad de propiedades disponibles para el fin de semana para 6 personas. Aquí está un resumen de las propiedades disponibles:
+            Message("user", "Hola"),
+            Message("assistant", "Hola, ¿en qué puedo ayudarte?"),
+            Message("user", "Quiero reservar una casa para el fin de semana para 6 personas."),
+            Message("assistant", """¡Hola! Tenemos una variedad de propiedades disponibles para el fin de semana para 6 personas. Aquí está un resumen de las propiedades disponibles:
 
             1. Sol:
             Impresionante villa con vistas panorámicas a las montañas. Esta lujosa propiedad ofrece un ambiente tranquilo y relajante con amplios espacios interiores y exteriores. Cuenta con una piscina privada, jardines exuberantes y una terraza para disfrutar de las maravillosas vistas. Perfecta para escapadas en familia o con amigos.
             Amenidades: Wi-Fi, estacionamiento privado, se admiten mascotas, barbacoa, piscina privada.
             Precio por noche: 250.0 USD
 
-            ¿Te gustaría reservar esta propiedad o te gustaría más información sobre alguna de las otras propiedades?"""},
-            {"role": "user", "content": "¿Tienen alguna otra propiedad disponible? El precio es un poco alto para mi presupuesto."},
-            {"role": "assistant", "content": "Lo siento, actualmente no tenemos otras propiedades disponibles para el fin de semana para 6 personas. ¿Te gustaría buscar en otras fechas?"},
-            {"role": "user", "content": "Gracias por su ayuda, pero no, no necesito buscar en otras fechas."}
+            ¿Te gustaría reservar esta propiedad o te gustaría más información sobre alguna de las otras propiedades?"""),
+            Message("user", "¿Tienen alguna otra propiedad disponible? El precio es un poco alto para mi presupuesto."),
+            Message("assistant", "Lo siento, actualmente no tenemos otras propiedades disponibles para el fin de semana para 6 personas. ¿Te gustaría buscar en otras fechas?"),
+            Message("user", "Gracias por su ayuda, pero no, no necesito buscar en otras fechas."),
         ]
         previous_steps_data = []
 
         # Act
-        resolver.run(step_data, messages, previous_steps_data)
+        resolver.run(messages, previous_steps_data)
 
         # Assert
-        self.assertIsInstance(step_data["result"], dict)
-        self.assertEqual(step_data["result"]["conversation_finished"], True)
+        self.assertEqual(resolver.data["conversation_finished"], True)
 
 
     def test_run_exit_task_resolver_false(self):
@@ -83,29 +79,26 @@ class TestExitTaskResolver(unittest.TestCase):
             #     {"role": "user", "content": "Soledad Ruiz\nsoledad.ruiz.camp@gmail.com"}
             # ],
             [
-                {"role": "user", "content": "Me gustaría reservar una casa para el lunes"},
-                {"role": "assistant", "content": "¡Hola! Claro, para poder ayudarte necesito saber ¿cuándo sería tu fecha de salida? y ¿cuántas personas se hospedarán contigo?"},
-                {"role": "user", "content": "Es por dos noches y solos 3 adultos y 2 niños"},
-                {"role": "assistant", "content": "¡Hola! Tenemos disponible la propiedad Cabaña 'Sol' que cuenta con capacidad para 8 personas y tiene un precio de 250 USD por noche. La propiedad cuenta con Wi-Fi, estacionamiento privado, es pet-friendly, tiene una parrilla y una piscina privada. ¿Te gustaría reservar esta propiedad?"},
-                {"role": "user", "content": "Si"},
-                {"role": "assistant", "content": "¡Genial! Para reservar la propiedad, necesito que me proporciones tu nombre y correo electrónico."},
-                {"role": "user", "content": "Agustin   Agustin@gmail.com"}
+                Message("user", "Me gustaría reservar una casa para el lunes"),
+                Message("assistant", "¡Hola! Claro, para poder ayudarte necesito saber ¿cuándo sería tu fecha de salida? y ¿cuántas personas se hospedarán contigo?"),
+                Message("user", "Es por dos noches y solos 3 adultos y 2 niños"),
+                Message("assistant", "¡Hola! Tenemos disponible la propiedad Cabaña 'Sol' que cuenta con capacidad para 8 personas y tiene un precio de 250 USD por noche. La propiedad cuenta con Wi-Fi, estacionamiento privado, es pet-friendly, tiene una parrilla y una piscina privada. ¿Te gustaría reservar esta propiedad?"),
+                Message("user", "Si"),
+                Message("assistant", "¡Genial! Para reservar la propiedad, necesito que me proporciones tu nombre y correo electrónico."),
+                Message("user", "Agustin   Agustin@gmail.com")
             ]
         ]
         resolver = ExitTaskResolver()
-        step_data = {"current_task_name": "MAKE_RESERVATION_TASK"}
+        # step_data = {"current_task_name": "MAKE_RESERVATION_TASK"}
         for idx, conv in enumerate(conversations):
             print(f"Running test {idx}")
-            previous_steps_data = []
+            previous_steps_data = dict()
             
             # Act
-            resolver.run(step_data, conv, previous_steps_data)
+            resolver.run(conv, previous_steps_data)
 
             # Assert
-            self.assertIsInstance(step_data["result"], dict)
-            self.assertEqual(step_data["result"]["conversation_finished"], False)
-
-
+            self.assertEqual(resolver.data["conversation_finished"], False)
 
 
 if __name__ == '__main__':
