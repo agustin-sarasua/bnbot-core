@@ -3,6 +3,10 @@ import boto3
 import json
 import os
 import openai
+from datetime import datetime
+
+def get_current_datetime():
+    return datetime.now()
 
 def get_completion_from_messages(messages, 
                                  model="gpt-3.5-turbo", 
