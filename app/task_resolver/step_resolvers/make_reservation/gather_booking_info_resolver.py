@@ -6,6 +6,7 @@ from typing import List, Any
 from datetime import datetime, timedelta
 
 delimiter = "####"
+#The only information you need is: check-in date, check-out date and number of guests staying.
 system_message =f"""
 You are an Assistant that gathers information from the user about booking an accommodation. 
 You respond allways in Spanish.
@@ -15,7 +16,7 @@ Follow these Steps before responding to the user new message:
 
 Step 1: Make sure the user provided the check-in date.
 
-Step 2: Make sure the user has provided the check-out date or the number of nights they are staying.
+Step 2: Make sure the user has provided either the check-out date or the number of nights they are staying.
 
 Step 3: Make sure the user has provided the number of guests that are staying.
 
@@ -38,7 +39,7 @@ class GatherBookingInfoResolver(StepResolver):
             result.append({'role': msg.role, 'content': msg.text})
         return result
     
-    def run(self, messages: List[Message], previous_steps_data: dict):
+    def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         
         # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
         # if exit_task_step_data.resolver_data["conversation_finished"] == True:
@@ -48,26 +49,21 @@ class GatherBookingInfoResolver(StepResolver):
         # chat_history = self.build_chat_history(messages)
         
         search_data_extractor = SearchDataExtractor()
-        booking_info = search_data_extractor.run(messages)
-        # {
-        #     "check_in_date": check_in_date,
-        #     "check_out_date": check_out_date,
-        #     "num_guests": num_guests
-        # }
-        checkin_date = booking_info["check_in_date"]
-        checkout_date = booking_info["check_out_date"]
-        # num_nights = booking_info["num_nights"]
-        num_guests = booking_info["num_guests"]
-
         chat_input = self.build_messages_from_conversation(messages)
         assistant_response = get_completion_from_messages(chat_input)
-        
-        if checkin_date is None or checkout_date is None or num_guests == 0:
-            # Get response message from Assistant
-            return assistant_response
 
-        self.data["booking_information"] = booking_info
-        return assistant_response
+        booking_info = search_data_extractor.run(messages)
+        
+        if booking_info is not None:
+            checkin_date = booking_info.get("check_in_date", None)
+            checkout_date = booking_info.get("check_out_date", None)
+            # num_nights = booking_info["num_nights"]
+            num_guests = booking_info.get("num_guests", None)
+
+            if checkin_date is not None and checkout_date is not None and num_guests > 0:
+                self.data["booking_information"] = booking_info
+
+        return Message.assistant_message(assistant_response)
     
     def is_done(self):
         if "booking_information" not in self.data:

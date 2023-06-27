@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 class PromptInjectionResolver(StepResolver):
 
-    def run(self, messages: List[Message], previous_steps_data: List[Any]) -> str:
+    def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         pass
         
     def is_done(self):

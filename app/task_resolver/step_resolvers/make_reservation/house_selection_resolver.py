@@ -29,7 +29,7 @@ class HouseSelectionResolver(StepResolver):
             })
         return json.dumps(data)
 
-    def run(self, messages: List[Message], previous_steps_data: dict):
+    def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
 
         # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
         # if exit_task_step_data.resolver_data["conversation_finished"] == True:
@@ -57,19 +57,22 @@ class HouseSelectionResolver(StepResolver):
         assistant = HouseSelectionAssistantTool()
         assistant_response = assistant.run(chat_history, properties_info)
 
-        prop_extractor = PropertySelectedExtractor()
-        prop_extractor_result = prop_extractor.run(messages)
+        
+        if not self.data["step_first_execution"]:
+            # There is not need to execute the PropertySelected if it is the first time executing this step.
+            prop_extractor = PropertySelectedExtractor()
+            prop_extractor_result = prop_extractor.run(messages)
 
-        if prop_extractor_result["user_has_selected"]:
-            properties_ids = self._format_property_json(properties_available)
-            prop_extractor_result = prop_extractor.run_load_property_id(properties_ids, prop_extractor_result["property_name"])
-            if "property_id" in prop_extractor_result and  prop_extractor_result["property_id"] is not None and prop_extractor_result["property_id"] != "":
-                self.data["property_picked_info"] = {
-                    "property_id": prop_extractor_result["property_id"],
-                    "price_per_night": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price'])}",
-                    "total_price": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price']) * float(booking_info['num_nights'])}"
-                }
-        return assistant_response
+            if prop_extractor_result["user_has_selected"]:
+                properties_ids = self._format_property_json(properties_available)
+                prop_extractor_result = prop_extractor.run_load_property_id(properties_ids, prop_extractor_result["property_name"])
+                if "property_id" in prop_extractor_result and  prop_extractor_result["property_id"] is not None and prop_extractor_result["property_id"] != "":
+                    self.data["property_picked_info"] = {
+                        "property_id": prop_extractor_result["property_id"],
+                        "price_per_night": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price'])}",
+                        "total_price": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price']) * float(booking_info['num_nights'])}"
+                    }
+        return Message.assistant_message(assistant_response)
     
     def is_done(self):
         if "property_picked_info" not in self.data:

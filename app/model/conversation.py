@@ -24,11 +24,14 @@ class Conversation:
             result += f"{msg.role}: {msg.text}\n"
         return result[:-1]
 
+    def text_preprocessing(self, msg: str) -> str:
+        return msg.replace("\n", "  ")
+
     def _add_message(self, msg: Message):
         self.messages.append(msg)
 
     def add_user_message(self, msg_text: str):
-        self._add_message(Message('user', msg_text))
+        self._add_message(Message('user', self.text_preprocessing(msg_text)))
 
     def add_assistant_message(self, msg_text: str):
-        self._add_message(Message('assistant', msg_text))                
+        self._add_message(Message('assistant', self.text_preprocessing(msg_text)))                

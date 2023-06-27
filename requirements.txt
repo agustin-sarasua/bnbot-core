@@ -11,3 +11,4 @@ python-decouple
 psycopg2-binary
 python-multipart
 pyngrok
+colorlog

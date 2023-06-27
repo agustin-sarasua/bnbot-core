@@ -62,17 +62,7 @@ class TaskExtractorChain:
 
 class TaskIdentifierResolver(StepResolver):
 
-    def run(self, messages: List[Message], previous_steps_data: List[Any]):
-        
-        # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
-        
-        # if exit_task_step_data.resolver_data["conversation_finished"] == True:
-        #     task_info = {
-        #         "task_id": "CONVERSATION_DONE",
-        #         "result": ""
-        #     }
-        #     self.data["task_info"] = task_info
-        #     return task_info
+    def run(self, messages: List[Message], previous_steps_data: List[Any], step_chat_history: List[Message] = None) -> Message:
 
         chat_history = self.build_chat_history(messages)
 
@@ -81,9 +71,9 @@ class TaskIdentifierResolver(StepResolver):
 
         if task_info["task_id"] != "":
             self.data["task_info"] = task_info
-
-        return task_info
+            return Message.route_message(task_info["text"], task_info["task_id"])
         
+        return Message.route_message(task_info["text"], "OTHER")
     def is_done(self):
         if "task_info" not in self.data:
             return False

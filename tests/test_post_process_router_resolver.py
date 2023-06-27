@@ -8,8 +8,8 @@ class TesPostProcessRouterResolver(unittest.TestCase):
 
     def test_run_post_process(self):
         post_process_resolvers = PostProcessRouterResolver([
-            {"name":"GATHER_BOOKING_INFO", "description":"If the user wants to change the check-in or check-out dates that he previously selected."},
-            {"name":"OTHER", "description":"If the user has not selected a property."},
+            {"name":"GATHER_BOOKING_INFO", "description":"This step must be taken only when the user wants to choose different check-in and check-out dates from the one he previously chose."},
+            {"name":"OTHER", "description":"This step must be taken if the user provided the check-in and check-out dates but he has not selected a house yet."},
         ])
 
         test_cases = [
@@ -30,7 +30,7 @@ class TesPostProcessRouterResolver(unittest.TestCase):
 
             # Assert
             self.assertIsNotNone(result)
-            self.assertEqual(test["expected_step"], result["step"])
+            self.assertEqual(test["expected_step"], result.key)
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ class BookingConfirmationResolver(StepResolver):
         return merged_dict
 
 
-    def run(self, messages: List[Message], previous_steps_data: dict) -> str:
+    def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         
         # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
         # if exit_task_step_data.resolver_data["conversation_finished"] == True:
@@ -30,18 +30,10 @@ class BookingConfirmationResolver(StepResolver):
         
         booking_info = self._build_booking_info(previous_steps_data)
         
-        step_chat_history = []    
-        if "step_chat_history" in self.data:
-            step_chat_history = self.data.get("step_chat_history")
-            step_chat_history.append({"role":"user", "content": messages[-1]})
-
         chat_history = self.build_chat_history(step_chat_history)
 
         booking_confirmator = BookingConfirmationChain()
-        result = booking_confirmator(booking_info, chat_history)
-        step_chat_history = self.data.get("step_chat_history", [])
-        step_chat_history.append({"role": "assistant", "content": result["text"]})
-        self.data["step_chat_history"] = step_chat_history
+        result = booking_confirmator.run(booking_info, chat_history)
 
         if result["booking_placed"] != "":
             self.data["booking_confirmed"] = result["booking_placed"]
@@ -49,7 +41,7 @@ class BookingConfirmationResolver(StepResolver):
         # if result["confirmed"] == "True":
         #     # TODO save booking in database.
         #     pass
-        return result["text"]
+        return Message.assistant_message(result["text"])
     
     def is_done(self):
         if "booking_confirmed" not in self.data:

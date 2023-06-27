@@ -8,6 +8,7 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.chat_models import ChatOpenAI
 from app.utils import chain_verbose
+from app.utils import logger
 
 template="""You are an Assistant that helps users choose a house based on its preferences. 
 Your task is only to help users pick a house for booking and answer any question about the properties, any other task must not be handled by you.
@@ -27,7 +28,8 @@ Step 4: If the user does not want any of the available properties, \
 you apologize and tell the user that you will notify him if you have something new available in the future.
 
 Here is the conversation: 
-{chat_history}"""
+{chat_history}
+assistant:"""
 
 
 class HouseSelectionAssistantTool:
@@ -50,5 +52,6 @@ class HouseSelectionAssistantTool:
     def run(self, chat_history, properties_info):
 
         info = self.chain({"properties_info": properties_info, "chat_history": chat_history})
+        logger.debug(f"HouseSelectionAssistantTool result {info}")
         return info["result"]
     

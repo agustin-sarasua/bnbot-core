@@ -7,7 +7,7 @@ delimiter = "####"
 
 class GatherUserInfoResolver(StepResolver):
 
-    def run(self, messages: List[Message], previous_steps_data: List[Any]) -> str:
+    def run(self, messages: List[Message], previous_steps_data: List[Any], step_chat_history: List[Message] = None) -> Message:
 
         # exit_task_step_data: StepData = previous_steps_data["EXIT_TASK_STEP"]
         # if exit_task_step_data.resolver_data["conversation_finished"] == True:
@@ -21,7 +21,7 @@ class GatherUserInfoResolver(StepResolver):
         
         self.data["user_information"] = user_info
 
-        return user_info["text"]
+        return Message.assistant_message(user_info["text"])
     
     def is_done(self):
         if "user_information" not in self.data:

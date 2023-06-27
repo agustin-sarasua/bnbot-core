@@ -62,7 +62,7 @@ class BookingConfirmationChain:
                               verbose=chain_verbose,
                               output_key="booking_confirmation_info")
 
-    def __call__(self, booking_info, chat_history):
+    def run(self, booking_info, chat_history):
         info = self.chain({"chat_history": chat_history,
                            "user_name": booking_info["user_name"], 
                            "email": booking_info["email"], 

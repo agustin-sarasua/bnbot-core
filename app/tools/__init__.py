@@ -6,3 +6,4 @@ from app.tools.user_info_extractor_tool import UserInformationExtractorChain
 from app.tools.booking_confirmation_tool import BookingConfirmationChain
 from app.tools.search_data_extractor import SearchDataExtractor
 from app.tools.property_selected_extractor import PropertySelectedExtractor
+from app.tools.next_step_extractor_tool import NextStepExtractor

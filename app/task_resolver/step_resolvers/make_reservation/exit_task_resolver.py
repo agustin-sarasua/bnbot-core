@@ -68,7 +68,7 @@ class ExitTaskResolver(StepResolver):
 
     exit_task_chain: ExitTaskChain = ExitTaskChain()
 
-    def run(self, messages: List[Message], previous_steps_data: dict):
+    def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         chat_history = self.build_chat_history(messages)
 
         # current_task = step_data["current_task_name"]
