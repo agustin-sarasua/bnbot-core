@@ -4,7 +4,8 @@ import openai
 import os
 import json
 from app.utils import logger
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
+
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
@@ -119,7 +120,12 @@ class SearchDataExtractor:
                      check_out_dow: {check_out_dow},
                      num_nights: {num_nights}""")
         return None
-        
+    
+    def get_num_days(self, start_date, end_date):
+        start_date = date.fromisoformat(start_date)
+        end_date = date.fromisoformat(end_date)
+        num_days = (end_date - start_date).days
+        return num_days
 
     def calculate_booking_info(self,
                             fn_params: dict):
@@ -148,10 +154,15 @@ class SearchDataExtractor:
             if check_out_date is not None:
                 check_out_date = check_out_date.strftime("%Y-%m-%d")
 
+        num_nights = None
+        if check_out_date is not None and check_in_date is not None:
+            num_nights = self.get_num_days(check_in_date, check_out_date)
+
         return {
             "check_in_date": check_in_date,
             "check_out_date": check_out_date,
-            "num_guests": num_guests
+            "num_guests": num_guests,
+            "num_nights": num_nights
         }
 
     def run(self, messages: List[Message]):
