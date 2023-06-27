@@ -9,8 +9,8 @@ def create_make_reservation_task():
         name="HOUSE_SELECTION", 
         resolver=HouseSelectionResolver(), 
         post_process_router_resolver=PostProcessRouterResolver([
-            {"name":"GATHER_BOOKING_INFO", "description":"When the user wants to look for properties in different dates."},
-            {"name":"CONTINUE", "description":"When none of the other options fit."},
+            {"name":"GATHER_BOOKING_INFO", "description":"If the user wants to change the check-in or check-out dates that he previously selected."},
+            {"name":"OTHER", "description":"If the user has not selected a property."},
         ]),
         reply_when_done=False)
     
@@ -23,7 +23,7 @@ def create_make_reservation_task():
             {"name":"GATHER_BOOKING_INFO", "description":"When the user wants to change the check-in, check-out or number of guests."},
             {"name":"HOUSE_SELECTION", "description":"When the user wants to select a different property."},
             {"name":"GATHER_USER_INFO", "description":"When the user does not want confirm the booking because there is an error or wants to change the email or the name for the reservation."},
-            {"name":"CONTINUE", "description":"When none of the other options fit."},
+            {"name":"OTHER", "description":"When none of the other options fit."},
         ]))
 
     reservation_task = Task(

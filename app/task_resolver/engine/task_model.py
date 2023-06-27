@@ -160,7 +160,7 @@ class Task:
                 if step.post_process_router_resolver is not None:
                     logger.debug(f"Task: {self.name} - Do we have to route to other space?")
                     next_step = step.post_process_router_resolver.run(step.data.step_chat_history, previous_steps_data)
-                    if next_step["step"] != "CONTINUE":
+                    if next_step["step"] != "OTHER":
                         logger.debug(f"Task: {self.name} - Routing to {next_step['step']}")
                         self._reset_previous_steps(next_step["step"])
                         route_to_previous_step = True
