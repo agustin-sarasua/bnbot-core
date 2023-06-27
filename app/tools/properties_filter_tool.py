@@ -1,72 +1,31 @@
-from typing import Optional
-from langchain.tools import BaseTool
 from datetime import datetime
-
-from langchain.callbacks.manager import (
-    AsyncCallbackManagerForToolRun,
-    CallbackManagerForToolRun,
-)
-
-from typing import Optional, Type
-
-from langchain.callbacks.manager import (
-    AsyncCallbackManagerForToolRun,
-    CallbackManagerForToolRun,
-)
-from langchain.tools import BaseTool
-from pydantic import BaseModel, BaseSettings, Field
-
 from datetime import datetime, timedelta
 from app.utils import Cache, read_json_from_s3, logger
 
-class PropertiesFilterToolSchema(BaseModel):
-    checkin_date: str = Field(default="", description="check-in date")
-    checkout_date: str = Field(default="", description="check-out date")
-    num_guests: str = Field(default="1", description="number of guests staying")
-    num_nights: str = Field(default="1", description="number of nights staying")
 
-
-class PropertiesFilterTool(BaseTool, BaseSettings):
-    """My custom Properties filter tool."""
-
-    name = "properties_filter"
-    description = "useful for when you need to load the properties information based on the check-in date, check-out date and number of guests. Do not use this tool if any of this information is missing."
-
-    args_schema: Type[PropertiesFilterToolSchema] = PropertiesFilterToolSchema
+class PropertiesFilterTool:
     
     properties_info_cache = Cache(-1)
 
     assistant_number = "test-number"
 
-    def _run(
+    def run(
         self, 
-        checkin_date: str, 
-        checkout_date: str,
+        check_in_date: str, 
+        check_out_date: str,
         num_guests: str,
-        num_nights: str,
-        # available_properties: dict,
-        run_manager: Optional[CallbackManagerForToolRun] = None
-    ) -> str:
-        
-        if checkin_date == "" or (num_nights == "" and checkout_date == ""):
+    ) -> dict:
+        # {
+        #     "check_in_date": check_in_date,
+        #     "check_out_date": check_out_date,
+        #     "num_guests": num_guests
+        # }
+        num_guests = int(num_guests)
+        if check_in_date is None or check_out_date is None or num_guests == 0:
             return dict()
 
-        num_nights = int(num_nights)
-        if num_nights > 0:
-           checkout_date_from_nights = self._calculate_checkout_date(checkin_date, num_nights)
-           if checkout_date != checkout_date_from_nights:
-               logger.warn("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
-               checkout_date = max(checkout_date, checkout_date_from_nights)
-
-        num_guests = int(num_guests)
         available_properties = self.load_properties_information()
-        return self._filter_properties(available_properties, checkin_date, checkout_date, num_guests)
-
-    async def _arun(
-        self, query: str, run_manager: Optional[AsyncCallbackManagerForToolRun] = None
-    ) -> str:
-        """Use the tool asynchronously."""
-        raise NotImplementedError("custom_search does not support async")
+        return self._filter_properties(available_properties, check_in_date, check_out_date, num_guests)
 
     def _calculate_checkout_date(self, checkin_date, num_nights):
         checkin_datetime = datetime.strptime(checkin_date, '%Y-%m-%d')

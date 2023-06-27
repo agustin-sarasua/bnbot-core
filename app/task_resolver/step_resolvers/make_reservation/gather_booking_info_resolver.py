@@ -1,7 +1,7 @@
 from app.task_resolver.engine import StepResolver, StepData, Message
 from app.utils import logger
 from app.utils import get_completion_from_messages
-from app.tools import InfoExtractorChain
+from app.tools import SearchDataExtractor
 from typing import List, Any
 from datetime import datetime, timedelta
 
@@ -45,38 +45,28 @@ class GatherBookingInfoResolver(StepResolver):
         #     logger.debug("Conversation finished. Responding None")
         #     return None
 
-        chat_history = self.build_chat_history(messages)
+        # chat_history = self.build_chat_history(messages)
         
-        info_extractor = InfoExtractorChain()
-        booking_info = info_extractor(chat_history)
-        
-        checkin_date = booking_info["checkin_date"]
-        checkout_date = booking_info["checkout_date"]
-        num_nights = booking_info["num_nights"]
+        search_data_extractor = SearchDataExtractor()
+        booking_info = search_data_extractor.run(messages)
+        # {
+        #     "check_in_date": check_in_date,
+        #     "check_out_date": check_out_date,
+        #     "num_guests": num_guests
+        # }
+        checkin_date = booking_info["check_in_date"]
+        checkout_date = booking_info["check_out_date"]
+        # num_nights = booking_info["num_nights"]
         num_guests = booking_info["num_guests"]
 
         chat_input = self.build_messages_from_conversation(messages)
         assistant_response = get_completion_from_messages(chat_input)
         
-        if checkin_date == "" or (num_nights == "" and checkout_date == ""):
+        if checkin_date is None or checkout_date is None or num_guests == 0:
             # Get response message from Assistant
             return assistant_response
 
-        num_nights = int(num_nights)
-        if num_nights > 0:
-           checkout_date_from_nights = self._calculate_checkout_date(checkin_date, num_nights)
-           if checkout_date != checkout_date_from_nights:
-               logger.error("There is something wrong with the dates here {checkout_date} - {checkout_date_from_nights}")
-               checkout_date = max(checkout_date, checkout_date_from_nights)
-
-        num_guests = int(num_guests)
-
-        self.data["booking_information"] = {
-            "checkin_date": checkin_date,
-            "checkout_date": checkout_date,
-            "num_nights": num_nights,
-            "num_guests": num_guests
-        }
+        self.data["booking_information"] = booking_info
         return assistant_response
     
     def is_done(self):
@@ -85,6 +75,6 @@ class GatherBookingInfoResolver(StepResolver):
         
         booking_information = self.data["booking_information"]
 
-        return (booking_information["checkin_date"] != "" and 
-                booking_information["checkout_date"] != "" and 
+        return (booking_information["check_in_date"] is not None and 
+                booking_information["check_out_date"] is not None and 
                 booking_information["num_guests"] > 0)

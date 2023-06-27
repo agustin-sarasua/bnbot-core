@@ -61,11 +61,11 @@ json_fn = {
             },
             "check_in_dow": {
                 "type": "string",
-                "description": "The Check In day of week i.e: Tuesday"
+                "description": "The Check In day of week in English i.e: Tuesday"
             },
             "check_out_dow": {
                 "type": "string",
-                "description": "The Check Out day of week i.e: Thursday"
+                "description": "The Check Out day of week in English i.e: Thursday"
             },
             "num_nights": {
                 "type": "string",
@@ -152,7 +152,7 @@ class SearchDataExtractor:
             "check_in_date": check_in_date,
             "check_out_date": check_out_date,
             "num_guests": num_guests
-        } 
+        }
 
     def run(self, messages: List[Message]):
         
@@ -168,7 +168,6 @@ class SearchDataExtractor:
             temperature=0., 
             max_tokens=500, 
         )
-        # print(response)
         fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
-        
+        logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
         return self.calculate_booking_info(fn_parameters)

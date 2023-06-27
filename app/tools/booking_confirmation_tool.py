@@ -64,10 +64,10 @@ class BookingConfirmationChain:
 
     def __call__(self, booking_info, chat_history):
         info = self.chain({"chat_history": chat_history,
-                            "user_name": booking_info["user_name"], 
+                           "user_name": booking_info["user_name"], 
                            "email": booking_info["email"], 
-                           "checkin_date": booking_info["checkin_date"], 
-                           "checkout_date": booking_info["checkout_date"], 
+                           "checkin_date": booking_info["check_in_date"], 
+                           "checkout_date": booking_info["check_out_date"], 
                            "num_guests": booking_info["num_guests"], 
                            "property_id": booking_info["property_id"],
                            "price_per_night": booking_info["price_per_night"],

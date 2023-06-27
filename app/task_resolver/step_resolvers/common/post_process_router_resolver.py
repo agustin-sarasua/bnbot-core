@@ -65,7 +65,7 @@ class PostProcessRouterResolver(StepResolver):
             result += f"{step['name']}: {step['description']}\n"
         return result[:-1]
     
-    def run(self, messages: List[Message], previous_steps_data: dict):
+    def run(self, messages: List[Message], previous_steps_data: dict=None):
         chat_history = self.build_chat_history(messages)
         return self.router_chain.run(chat_history, self.steps_str)
         

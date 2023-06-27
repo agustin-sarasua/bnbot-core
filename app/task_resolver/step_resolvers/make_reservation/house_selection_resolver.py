@@ -30,7 +30,8 @@ class HouseSelectionResolver(StepResolver):
 
         property_loader = PropertiesFilterTool()
         if "properties_available" not in self.data:
-            properties_available = property_loader.run(tool_input=booking_info)
+            logger.debug(f"Calling tool with: {booking_info}")
+            properties_available = property_loader.run(booking_info["check_in_date"], booking_info["check_out_date"], booking_info["num_guests"])
             logger.debug(f"{self.__class__.__name__} - Properties available: {properties_available}")
             self.data["properties_available"] = properties_available
 

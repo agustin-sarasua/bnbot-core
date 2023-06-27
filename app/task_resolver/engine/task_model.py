@@ -5,9 +5,6 @@ import uuid
 import copy
 
 class Message:
-    text: str
-    id: str
-    role: str
 
     def __init__(self, role, text):
         self.text = text
@@ -24,6 +21,9 @@ class Message:
     
     def __str__(self):
         return f"{self.role}: {self.text}"
+    
+    def __repr__(self):
+        return str(self)
 
 class StepResolver(ABC):
     
@@ -51,9 +51,17 @@ class StepData:
     previous_steps_data: dict
     result: dict
     resolver_data: dict
+    step_chat_history: List[Message]
+
+    def __init__(self):
+        self.step_chat_history = []
+        self.resolver_data = {}
 
     def __str__(self):
-        return f"StepData(result={self.result}, resolver_data={self.resolver_data}, input_messages={self.input_messages})"
+        return f"""StepData(result={self.result}, 
+        resolver_data={self.resolver_data}, 
+        input_messages={self.input_messages}),
+        step_chat_history={self.step_chat_history}"""
 
 
 class Step:
@@ -87,6 +95,7 @@ class Step:
     def resolve(self, input_messages: List[Message], previous_steps_data: dict):
         logger.debug(f"Resolving Step: {self.name}")
 
+        self.data.step_chat_history.append(input_messages[-1])
         self.data.input_messages = input_messages
         self.data.previous_steps_data = previous_steps_data
         
@@ -94,6 +103,7 @@ class Step:
         
         self.data.resolver_data = self.resolver.data
         self.data.result = result
+        self.data.step_chat_history.append(Message.assistant_message(result))
 
         logger.debug(f"Step: {self.name} - Resolver Result: {result}")
         logger.debug(f"Step: {self.name} - is_done {self.is_done()}")
@@ -128,7 +138,10 @@ class Task:
                 # Reset Step
                 break
 
-    def run(self, conversation_messages: List[Message]) -> str:
+    def run(self, conversation_messages: List[Message], recursive_step: int=0) -> str:
+        if recursive_step > 1:
+            logger.error(f"Task {self.name}: we entered in a loop!")
+            return None
         if self.is_done():
             logger.info(f"Task {self.name} DONE, returning None")
             return None
@@ -146,7 +159,7 @@ class Task:
                 # Check post process router
                 if step.post_process_router_resolver is not None:
                     logger.debug(f"Task: {self.name} - Do we have to route to other space?")
-                    next_step = step.post_process_router_resolver.run(conversation_messages, previous_steps_data)
+                    next_step = step.post_process_router_resolver.run(step.data.step_chat_history, previous_steps_data)
                     if next_step["step"] != "CONTINUE":
                         logger.debug(f"Task: {self.name} - Routing to {next_step['step']}")
                         self._reset_previous_steps(next_step["step"])
@@ -158,5 +171,6 @@ class Task:
             
         if route_to_previous_step:
             logger.debug(f"Task: {self.name} - Routing to previous Step")
-            return self.run(conversation_messages)
+            recursive_step += 1
+            return self.run(conversation_messages, recursive_step)
         
