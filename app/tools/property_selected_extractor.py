@@ -10,20 +10,20 @@ openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 json_fn = {
     "name": "set_property_selected",
-    "description": "Extract the property selected by the user from the available properties",
+    "description": "Saves the name of the property the user has chosen.",
     "parameters": {
         "type": "object",
         "properties": {
-            "user_has_selected": {
-                "type": "boolean",
-                "description": "Wether the user has explicitly selected a property from the available options"
-            },
+            # "user_has_selected": {
+            #     "type": "boolean",
+            #     "description": "Has the user chosen one option from the available properties?"
+            # },
             "property_name": {
                 "type": "string",
-                "description": "The name of the property selected by the user"
+                "description": "The name of the property the user has chosen."
             },
         },
-        "required": ["user_has_selected", "property_name"]
+        "required": ["property_name"]
     }
 }
 
@@ -46,7 +46,7 @@ class PropertySelectedExtractor:
 
     def run(self, messages: List[Message]):
         
-        messages_input = [{"role": "system", "content": "What is the property that the user wants to book?"}]
+        messages_input = [{"role": "system", "content": "Save the property name of the property chosen by the user if the user has chosen one already."}]
         for msg in messages:
             messages_input.append({"role": msg.role, "content": msg.text})
         # messages_input.append("role")
@@ -54,13 +54,18 @@ class PropertySelectedExtractor:
             model="gpt-3.5-turbo-0613",
             messages=messages_input,
             functions=[json_fn],
-            function_call={"name": "set_property_selected"},
             temperature=0., 
             max_tokens=500, 
         )
-        fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
-        logger.debug(f"set_property_selected fn_parameters {fn_parameters}")
-        return fn_parameters
+        if "function_call" in response.choices[0].message and "arguments" in response.choices[0].message["function_call"]:
+            fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
+            fn_parameters["user_has_selected"] = ("property_name" in fn_parameters and fn_parameters["property_name"] != "")
+            logger.debug(f"set_property_selected fn_parameters {fn_parameters}")
+            return fn_parameters
+        
+        return {"user_has_selected": False }
+        
+        
     
     def run_load_property_id(self, available_properties, property_name):
         system_prompt = f"""Save the property_id of the property with name: {property_name}?

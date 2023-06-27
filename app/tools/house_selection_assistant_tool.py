@@ -52,6 +52,6 @@ class HouseSelectionAssistantTool:
     def run(self, chat_history, properties_info):
 
         info = self.chain({"properties_info": properties_info, "chat_history": chat_history})
-        logger.debug(f"HouseSelectionAssistantTool result {info}")
+        # logger.debug(f"HouseSelectionAssistantTool result {info}")
         return info["result"]
     
