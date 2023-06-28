@@ -3,6 +3,7 @@ from typing import List, Any
 from app.utils import logger
 import uuid
 import copy
+from datetime import datetime
 
 class Message:
 
@@ -11,6 +12,7 @@ class Message:
         self.text = text
         self.role = role
         self.id = uuid.uuid4()
+        self.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def assistant_message(text):

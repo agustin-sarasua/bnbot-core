@@ -9,6 +9,20 @@ from datetime import datetime, timedelta, date
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
+import unicodedata
+
+def remove_spanish_special_characters(text):
+    """
+    Removes Spanish special characters from a string.
+    """
+    # Normalize the string by converting it to Unicode NFD form
+    normalized_text = unicodedata.normalize('NFD', text)
+    # Remove combining characters
+    stripped_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
+    # Remove specific Spanish special characters
+    removed_special_characters = stripped_text.replace('ñ', 'n').replace('Ñ', 'N').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U')
+    return removed_special_characters
+
 def get_current_datetime():
     return datetime.now()
 
@@ -17,10 +31,17 @@ def calculate_date_based_on_day_name(date_from: datetime, day_name: str) -> date
 
     def _day_name_to_int(day_string) -> int:
         # Convert the day string to lowercase for case-insensitive comparison
-        day_string_lower = day_string.lower()
+        day_string_lower = remove_spanish_special_characters(day_string.lower())
 
         # Map day strings to day numbers
         day_mapping = {
+            'lunes': 0,
+            'martes': 1,
+            'miercoles': 2,
+            'jueves': 3,
+            'viernes': 4,
+            'sabado': 5,
+            'domingo': 6,
             'monday': 0,
             'tuesday': 1,
             'wednesday': 2,
@@ -165,6 +186,11 @@ class SearchDataExtractor:
             "num_nights": num_nights
         }
 
+    def normalize_dow(self, params):
+        map_days = {
+            "lunes"
+        }
+
     def run(self, messages: List[Message]):
         
         messages_input = [{"role": "system", "content": "What are the the exact check-in and check-out dates and number of guests for the reservation?"}]
@@ -181,4 +207,5 @@ class SearchDataExtractor:
         )
         fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
         logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
+
         return self.calculate_booking_info(fn_parameters)

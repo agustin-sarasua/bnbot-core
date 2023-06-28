@@ -33,9 +33,9 @@ def create_task(task_name):
 
 def main_flow(message: Message, customer_number: str) -> Message: 
 
-    if message == "exit":
+    if message.text == "exit":
         system.save_conversation(Conversation(customer_number, create_task_router_task()))
-        return "Conversacion reiniciada. Puedes comenzar de nuevo!"
+        return Message.assistant_message("Conversacion reiniciada. Puedes comenzar de nuevo!")
 
     conversation = system.get_conversation(customer_number)
     conversation._add_message(message)
@@ -79,7 +79,7 @@ async def reply(Body: str = Form(), To: str = Form(), From: str = Form(), Profil
         user_message = Message.user_message(Body)
         response = main_flow(message=user_message, customer_number=From)
         if response is not None and response != "":
-            twilio_integration.send_message(From, response.text)
+            twilio_integration.send_message(From, response)
 
         response = {"statusCode": 200}
         return response
