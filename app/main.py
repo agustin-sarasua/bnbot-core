@@ -13,14 +13,22 @@ from app.task_resolver.tasks import create_make_reservation_task, create_task_ro
 from app.task_resolver.engine import Message
 from app.utils import logger
 from app.integrations import TwilioMessagingAPI
-import traceback
 
+from app.backend.presentation.routers import reservation_router
+from app.backend.main_backend import init_backend
+import traceback
 
 account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_number = os.environ.get('TWILIO_NUMBER')
 
+init_backend()
+
 app = FastAPI()
+
+##### BACKEND #####
+app.include_router(reservation_router.reservation_api_router)
+##### BACKEND #####
 
 system = System()
 twilio_integration = TwilioMessagingAPI(account_sid, auth_token, twilio_number)

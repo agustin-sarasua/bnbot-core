@@ -1,0 +1,45 @@
+{
+    "business_name": "Complejo Enrique Joaquin",
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "bnbot_id": "@complejo_enrique_joaquin",
+    "description": "",
+    "property_owners": [
+        {
+            "name": "Gonzalo Sarasua",
+            "phone_number": "+59899513718",
+            "email": "sarasua.gonzalo@gmail.com"
+        }
+    ],
+    "payment_options":[
+        {
+            "pyment_method": "Bank Account",
+            "instructions": ""
+        },
+        {
+            "pyment_method": "Debit Card",
+            "instructions": ""
+        },
+        {
+            "pyment_method": "Credit Card",
+            "instructions": ""
+        },
+        {
+            "pyment_method": "Payment Link",
+            "instructions": ""
+        }
+    ],
+    "how_to_arrive":"",
+    "properties": [
+        {
+            "property_id": ""
+        }
+    ]
+}

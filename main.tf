@@ -34,6 +34,12 @@ resource "aws_s3_bucket" "bnbot_bucket" {
   }
 }
 
+resource "aws_s3_bucket_object" "delete_all_objects" {
+  bucket = "bnbot-bucket"
+  key    = "*"
+  force_destroy = true
+}
+
 resource "aws_s3_bucket_ownership_controls" "bnbot_bucket" {
   bucket = aws_s3_bucket.bnbot_bucket.id
   rule {
