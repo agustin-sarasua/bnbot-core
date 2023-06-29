@@ -10,6 +10,16 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydatabase
 
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+
   web:
     build:
       context: .
@@ -19,8 +29,15 @@ services:
     image: bnbot:latest
     restart: always
     ports:
-      - 8000:80
+      - 8080:80
     depends_on:
       - db
+      - dynamodb-local
+    links:
+      - dynamodb-local
     environment:
-      - DATABASE_URL=postgresql://myuser:mypassword@db/mydatabase
+      DATABASE_URL: 'postgresql://myuser:mypassword@db/mydatabase'
+      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
+      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
+      REGION: 'us-east-1'
+      DYNAMO_DB_URL: 'http://dynamodb-local:8000'

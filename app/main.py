@@ -14,7 +14,7 @@ from app.task_resolver.engine import Message
 from app.utils import logger
 from app.integrations import TwilioMessagingAPI
 
-from app.backend.presentation.routers import reservation_router
+from app.backend.presentation.routers import reservation_router, business_router
 from app.backend.main_backend import init_backend
 import traceback
 
@@ -28,6 +28,7 @@ app = FastAPI()
 
 ##### BACKEND #####
 app.include_router(reservation_router.reservation_api_router)
+app.include_router(business_router.business_api_router)
 ##### BACKEND #####
 
 system = System()

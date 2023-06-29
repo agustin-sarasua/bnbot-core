@@ -4,23 +4,6 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class Location(BaseModel):
-    place_name: str
-    latitude: float
-    longitude: float
-    address: str
-    city: str
-    state: str
-    country: str
-    postal_code: str = None
-
-
-class Business(BaseModel):
-    id: int
-    name: str
-    location: Location
-
-
 class Reservation(BaseModel):
     id: int = None
 
