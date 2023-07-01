@@ -14,3 +14,5 @@ pyngrok
 colorlog
 sqlalchemy
 sqlalchemy_utils
+
+scrapy
