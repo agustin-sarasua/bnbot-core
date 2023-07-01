@@ -3,3 +3,16 @@ langchain
 python-dotenv
 requests
 boto3
+twilio
+fastapi
+python-multipart
+uvicorn
+python-decouple
+psycopg2-binary
+python-multipart
+pyngrok
+colorlog
+sqlalchemy
+sqlalchemy_utils
+
+scrapy

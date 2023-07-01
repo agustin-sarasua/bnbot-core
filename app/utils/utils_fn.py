@@ -1,6 +1,28 @@
 import time
 import boto3
 import json
+import os
+import openai
+from datetime import datetime
+
+def get_current_datetime():
+    return datetime.now()
+
+def get_completion_from_messages(messages, 
+                                 model="gpt-3.5-turbo", 
+                                 temperature=0, 
+                                 max_tokens=500):
+    
+    openai.api_key = os.environ['OPENAI_API_KEY']
+
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=messages,
+        temperature=temperature, 
+        max_tokens=max_tokens, 
+    )
+    return response.choices[0].message["content"]
+
 
 def read_json_from_s3(bucket_name, file_name):
     s3 = boto3.resource('s3')
@@ -11,6 +33,7 @@ def read_json_from_s3(bucket_name, file_name):
         return json_data
     except Exception as e:
         print(f"Error reading JSON file: {e}")
+        
         return None
 
 
@@ -19,12 +42,12 @@ class Cache:
         self.cache_data = {}
         self.timeout = timeout
 
-    def get(self, key):
-        value, timestamp = self.cache_data.get(key, ([], None))
+    def get(self, key, default_value):
+        value, timestamp = self.cache_data.get(key, (default_value, None))
         if self.timeout > 0:
             if timestamp and time.time() - timestamp > self.timeout:
                 self.delete(key)
-                return []
+                return default_value
         return value
 
     def set(self, key, value):

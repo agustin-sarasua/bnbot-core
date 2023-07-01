@@ -1,13 +1,20 @@
-FROM public.ecr.aws/lambda/python:3.9
+FROM python:3.9-slim
 
-# Install the function's dependencies using file requirements.txt
-# from your project folder.
+# Set working directory
+WORKDIR /app
 
-COPY requirements.txt  .
-RUN  pip3 install -r requirements.txt --target "${LAMBDA_TASK_ROOT}"
+# Copy requirements file
+COPY requirements.txt requirements.txt
 
-# Copy function code
-COPY . /app ${LAMBDA_TASK_ROOT}
+# Install dependencies
+RUN pip install -r requirements.txt
 
-# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-CMD [ "main.handler" ]
+# Copy application files
+#COPY main.py main.py
+COPY app app
+
+# Expose port
+EXPOSE 80
+
+# Start application with Uvicorn
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]

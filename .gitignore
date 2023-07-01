@@ -1,6 +1,6 @@
 # Local .terraform directories
 **/.terraform/*
-
+docker/*
 # .tfstate files
 *.tfstate
 *.tfstate.*
@@ -60,3 +60,5 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+.vscode/

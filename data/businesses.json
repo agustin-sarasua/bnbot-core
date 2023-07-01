@@ -1,0 +1,57 @@
+{
+    "business_id": "asdfasdfasdfasdf",
+    "business_name": "Complejo Enrique Joaquin",
+    "description": "Complejo de campo muy bueno",
+    "bnbot_id": "@complejo_enrique_joaquin",
+    "bnbot_configuration": {
+        "booking_deposit": 0.1,
+        "pre_book_time": 60
+    },
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "business_owners": [
+        {
+            "name": "Gonzalo Sarasua",
+            "phone_number": "+59899513718",
+            "email": "sarasua.gonzalo@gmail.com"
+        }
+    ],
+    "payment_options":[
+        {
+            "pyment_method": "DIRECT_BANK_TRANSFER",
+            "instructions": "Para realizar el deposito etc."
+        }
+    ],
+    "how_to_arrive_instructions": "El complejo queda en ruta 2 km 287, cerca del pejae. Yendo para Fray Bentos desde Mercedes a mano izquierda. Aqui esta la ubicacion en google maps: https://goo.gl/maps/R8gQZDHVXr2tiPQA8",
+    "properties": [
+        {
+            "property_id": "Sol",
+            "name": "Cabaña \"Sol\"",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
+            "description": "Impresionante villa con vistas panorámicas a las montañas. Esta lujosa propiedad ofrece un ambiente tranquilo y relajante con amplios espacios interiores y exteriores. Cuenta con una piscina privada, jardines exuberantes y una terraza para disfrutar de las maravillosas vistas. Perfecta para escapadas en familia o con amigos.",
+            "amenities": ["Wi-Fi", "private parking", "pet-friendly", "barbecue", "private pool"],
+            "price_per_night": 250.0,
+            "currency": "USD",
+            "max_guests": 8,
+            "pick_up_keys_instructions": "Las llaves se encuentran en un box en la puerta de entrada. La clave para abrir el box es 12345."
+        },
+        {
+            "property_id": "Luna",
+            "name": "Cabaña \"Luna\"",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=8e422a9c-2ae6-4f83-8b28-18776ffcecfc"],
+            "description": "Impresionante villa con vistas panorámicas a las montañas. Esta lujosa propiedad ofrece un ambiente tranquilo y relajante con amplios espacios interiores y exteriores. Cuenta con una piscina privada, jardines exuberantes y una terraza para disfrutar de las maravillosas vistas. Perfecta para escapadas en familia o con amigos.",
+            "amenities": ["Wi-Fi", "private parking", "pet-friendly", "barbecue", "private pool"],
+            "price_per_night": 120.0,
+            "currency": "USD",
+            "max_guests": 4,
+            "pick_up_keys_instructions": "Las llaves se encuentran en un box en la puerta de entrada. La clave para abrir el box es 12345."
+         }
+    ]
+}

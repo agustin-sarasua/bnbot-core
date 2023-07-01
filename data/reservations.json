@@ -1,0 +1,12 @@
+{"check_in": "2023-06-01",
+"check_out": "2023-06-13",
+"num_guests": 3,
+"property_id": "Sol",
+"price_per_night": 120.8,
+"total_price": 200.0,
+"currency": "USD",
+"chat_id": "some_chat_id",
+"customer_number": "1234",
+"customer_name": "Agustin",
+"customer_email": "a@a.com",
+"timestamp": "2023-06-29 14:42:08.834"}
