@@ -193,7 +193,7 @@ class SearchDataExtractor:
 
     def run(self, messages: List[Message]):
         
-        messages_input = [{"role": "system", "content": "What are the the exact check-in and check-out dates and number of guests for the reservation?"}]
+        messages_input = [{"role": "system", "content": "What are the exact check-in and check-out dates and number of guests for the reservation?"}]
         for msg in messages:
             messages_input.append({"role": msg.role, "content": msg.text})
         # messages_input.append("role")

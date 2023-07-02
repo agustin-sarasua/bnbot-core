@@ -11,7 +11,7 @@ from app.utils import logger
 
 from app.backend.presentation.routers import reservation_router, business_router
 
-from app.backend.domain.usecases import CreateReservationUseCase, CreateBusinessUseCase
+from app.backend.domain.usecases import CreateReservationUseCase, CreateBusinessUseCase, ListBusinessUseCase
 from app.backend.infraestructure.repositories import ReservationRepository, BusinessRepository
 
 def init_backend():
@@ -37,3 +37,4 @@ def init_backend():
 
     business_repository = BusinessRepository(aws_access_key_id, aws_secret_access_key, region, dynamo_url)
     business_router.create_business_use_case = CreateBusinessUseCase(business_repository)
+    business_router.list_business_use_case = ListBusinessUseCase(business_repository)

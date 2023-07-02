@@ -1,4 +1,4 @@
-from app.tools.info_extractor_chain import InfoExtractorChain
+# from app.tools.info_extractor_chain import InfoExtractorChain
 from app.tools.properties_filter_tool import PropertiesFilterTool
 from app.tools.properties_summarizer_tool import PropertiesSummarizerTool
 from app.tools.house_selection_assistant_tool import HouseSelectionAssistantTool
@@ -7,3 +7,4 @@ from app.tools.booking_confirmation_tool import BookingConfirmationChain
 from app.tools.search_data_extractor import SearchDataExtractor
 from app.tools.property_selected_extractor import PropertySelectedExtractor
 from app.tools.next_step_extractor_tool import NextStepExtractor
+from app.tools.business_search_data_extractor import BusinessSearchDataExtractor
