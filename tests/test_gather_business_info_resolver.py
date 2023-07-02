@@ -33,6 +33,19 @@ class TestGatherBusinessInfoResolver(unittest.TestCase):
                 ],
                 "expected_resolver_done": False
             },
+            {
+                "messages": [
+                    Message("user", "Hola"),
+                    Message("assistant", "Hola, ¿en qué puedo ayudarte?"),
+                    Message("user", "Me gustaría reservar una casa para dos personas, para el jueves que viene por dos noches.")
+                ],
+                "step_chat_history": [
+                    Message("user", "Hola"),
+                    Message("assistant", "Hola, ¿en qué puedo ayudarte?"),
+                    Message("user", "Me gustaría reservar una casa para dos personas, para el jueves que viene por dos noches.")
+                ],
+                "expected_resolver_done": False
+            },
             # {
             #     "messages": [
             #         Message("user", "Hola"),

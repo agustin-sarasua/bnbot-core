@@ -33,7 +33,7 @@ response to th user:
 
 class BusinessSelectionResolver(StepResolver):
     
-    backend_api_client: BackendAPIClient
+    # backend_api_client: BackendAPIClient
 
     def __init__(self, backend_url: str):
         self.backend_api_client = BackendAPIClient(backend_url)
@@ -68,39 +68,51 @@ class BusinessSelectionResolver(StepResolver):
         business_info = gather_business_info_step_data.resolver_data["business_info"]
 
         logger.debug(f"list_businesses input {business_info}")
-        businesses = self.backend_api_client.list_businesses(json.dumps(business_info))
+        business_list = self.backend_api_client.list_businesses(business_info)
+        logger.debug(f"list_businesses output {business_list}")
 
-        if len(businesses) == 0:
+        if len(business_list) == 0:
             # Not found
             businesses_info = "Unfortunately there are no businesses available."
             # Inform, came back to previous step, erase previous step data
-            self.data["forced_next_step"] = "GATHER_BUSINESS_INFO"
-        elif len(businesses) == 1:
-            # Stay here and confirm that the property is the correct one
-            businesses_info = self._format_business_json(businesses)
-        else:
-            # Select 1 from the list found and confirm.
-            businesses_info = self._format_business_json(businesses)
-        
+            self.data["business_info"] = {
+                "properties_available": False,
+                "business_id": ""
+            }
+            formatted_system_message = system_message.format(businesses_info=businesses_info)
+
+            chat_input = OpenAIClient.build_messages_from_conversation(formatted_system_message, messages)
+            assistant_response = get_completion_from_messages(chat_input)
+            return Message.assistant_message(assistant_response)        
+
+        self.data["business_info"] = {
+            "properties_available": True
+        }
+
+        # Select 1 from the list found and confirm.
+        businesses_info = self._format_business_json(business_list)
+
         formatted_system_message = system_message.format(businesses_info=businesses_info)
 
         chat_input = OpenAIClient.build_messages_from_conversation(formatted_system_message, messages)
         assistant_response = get_completion_from_messages(chat_input)
-
-        
-        if not self.data["step_first_execution"]:
+    
+        if not self.data["step_first_execution"] and len(business_list) > 0:
             extractor = BusinessSelectedExtractor()
-            extractor_result = extractor.run(messages, businesses)
+            extractor_result = extractor.run(messages, business_list)
 
             if extractor_result["user_has_selected"]:
-                self.data["business_info"] = extractor_result
-
+                self.data["business_info"]["business_id"] = extractor_result["business_id"]
+                self.data["business_info"]["user_has_selected"] = extractor_result["user_has_selected"]
+                
         return Message.assistant_message(assistant_response)
     
     def is_done(self):
         if "business_info" not in self.data:
             return False
         
-        # TODO validate that the property_picked is valid agains the properties_available.
-        return (self.data["business_info"]["business_id"] != "" and 
-                self.data["business_info"]["business_id"] is not None)
+        if not self.data["business_info"]["properties_available"]:
+            return True
+        
+        # There are properties_available and the user has selected already.
+        return self.data["business_info"]["user_has_selected"] 

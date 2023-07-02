@@ -3,25 +3,12 @@ from app.model import Message
 import openai
 import os
 import json
-from app.utils import logger
+from app.utils import logger, remove_spanish_special_characters
 from datetime import datetime, timedelta, date
 
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-import unicodedata
-
-def remove_spanish_special_characters(text):
-    """
-    Removes Spanish special characters from a string.
-    """
-    # Normalize the string by converting it to Unicode NFD form
-    normalized_text = unicodedata.normalize('NFD', text)
-    # Remove combining characters
-    stripped_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
-    # Remove specific Spanish special characters
-    removed_special_characters = stripped_text.replace('ñ', 'n').replace('Ñ', 'N').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U')
-    return removed_special_characters
 
 def get_current_datetime():
     return datetime.now()

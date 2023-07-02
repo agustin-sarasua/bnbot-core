@@ -101,7 +101,7 @@ class Step:
         self.execution_log.append(copy.deepcopy(self.data))
         return result
 
-class Task:
+class Task(ABC):
     name: str
     steps: List[Step]
     data: dict
@@ -109,8 +109,11 @@ class Task:
     def __init__(self, name: str, steps: List[Step]):
         self.name = name
         self.steps = steps
-        self.next_task: Optional[Task] = None
     
+    @abstractmethod
+    def get_next_task(self) -> Optional['Task']:
+        pass
+
     def is_done(self) -> bool:
         for step in self.steps:
             if not step.is_done():
@@ -130,43 +133,22 @@ class Task:
                          Step Name: {step_name}
                          Steps available: {step_names}""")
 
-    def run(self, conversation_messages: List[Message], recursive_step: int=0) -> Message:
-        if recursive_step > 1:
-            logger.error(f"Task {self.name}: we entered in a loop!")
-            return None
+    def run(self, conversation_messages: List[Message]) -> Message:
+        logger.debug(f"Running Task: {self.name}")
         if self.is_done():
-            logger.info(f"Task {self.name} DONE, returning None")
-            if self.next_task is not None:
-                logger.info(f"Next Task to execute {self.next_task.name}")
-                self.next_task.data["previous_task_data"] = self.data
+            logger.error(f"Task {self.name} DONE, returning None")
             return None
+        
         previous_steps_data = {}
-        route_to_previous_step = False
+        
         for step in self.steps:
-            # step.data["current_task_name"] = self.name
             previous_steps_data[step.name] = step.data
-
             if not step.is_done() or step.force_execution:
                 logger.debug(f"Task: {self.name} - Resolving Step {step.name}")
                 response = step.resolve(conversation_messages, previous_steps_data)
                 if step.is_done() and not step.reply_when_done:
                     continue
-                # Check post process router
-                if step.post_process_router_resolver is not None:
-                    logger.debug(f"Task: {self.name} - Do we have to route to other space?")
-                    step.post_process_router_resolver.data = step.data
-                    next_step: Message = step.post_process_router_resolver.run(step.data.step_chat_history, previous_steps_data)
-                    if next_step.key != "OTHER":
-                        logger.debug(f"Task: {self.name} - Routing to {next_step.key}")
-                        self._reset_previous_steps(next_step.key)
-                        route_to_previous_step = True
-                        break
+
                 return response
             else:
-                logger.debug(f"Task: {self.name} - Skipping Step {step.name} - it is DONE")
-            
-        if route_to_previous_step:
-            logger.debug(f"Task: {self.name} - Routing to previous Step")
-            recursive_step += 1
-            return self.run(conversation_messages, recursive_step)
-        
+                logger.debug(f"Task: {self.name} - Skipping Step {step.name} - it is DONE")  

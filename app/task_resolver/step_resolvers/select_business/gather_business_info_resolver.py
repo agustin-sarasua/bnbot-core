@@ -54,7 +54,7 @@ class GatherBusinessInfoResolver(StepResolver):
         
         business_info = self.data["business_info"]
 
-        return (("business_id" in business_info and business_info["business_id"] is not None) or 
+        return (("bnbot_id" in business_info and business_info["bnbot_id"] is not None) or 
                 (("location" in business_info and business_info["location"] is not None) and 
                  (("business_name" in business_info and business_info["business_name"] is not None) or 
                   ("business_owner" in business_info and business_info["business_owner"]))))

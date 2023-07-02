@@ -3,25 +3,11 @@ from app.model import Message
 import openai
 import os
 import json
-from app.utils import logger
+from app.utils import logger, remove_spanish_special_characters
 from datetime import datetime, timedelta, date
 
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
-
-import unicodedata
-
-def remove_spanish_special_characters(text):
-    """
-    Removes Spanish special characters from a string.
-    """
-    # Normalize the string by converting it to Unicode NFD form
-    normalized_text = unicodedata.normalize('NFD', text)
-    # Remove combining characters
-    stripped_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
-    # Remove specific Spanish special characters
-    removed_special_characters = stripped_text.replace('ñ', 'n').replace('Ñ', 'N').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U')
-    return removed_special_characters
 
 
 json_fn = {
@@ -34,7 +20,7 @@ json_fn = {
                 "type": "string",
                 "description": "The name of the city or location where the property is."
             },
-            "business_id": {
+            "bnbot_id": {
                 "type": "string",
                 "description": "The ID of the business the user is looking for. The id does not have spaces and always starts with the @ character. i.e: '@casa.de.alejandro'."
             },
@@ -47,14 +33,14 @@ json_fn = {
                 "description": "The name of the business the owner. This is a person's name like: Gonzalo Sarasua or just Gonzalo."
             }
         },
-        "required": ["location"]
+        "required": []
     }
 }
 
 class BusinessSearchDataExtractor:
 
     def _have_enough_info(self, fn_parameters: dict):
-        if "business_id" in fn_parameters and fn_parameters["business_id"] != "":
+        if "bnbot_id" in fn_parameters and fn_parameters["bnbot_id"] != "":
             return True
         
         if "location" in fn_parameters and fn_parameters["location"] != "":
@@ -75,7 +61,7 @@ class BusinessSearchDataExtractor:
             model="gpt-3.5-turbo-0613",
             messages=messages_input,
             functions=[json_fn],
-            # function_call={"name": "calculate_booking_info"},
+            # function_call={"name": "calculate_business_info"},
             temperature=0., 
             max_tokens=500, 
         )

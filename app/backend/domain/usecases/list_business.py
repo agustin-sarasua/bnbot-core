@@ -39,7 +39,7 @@ class ListBusinessUseCase:
                     return [business]
         logger.debug(f"Searching for {load_business.business_name}")
         # logger.debug(f"Searching in {businesses}")
-
-        result = full_text_search(businesses, load_business.business_name, 'business_name')
-        return result[:3]
-        
+        if load_business.business_name is not None and load_business.business_name != "":
+            result = full_text_search(businesses, load_business.business_name, 'business_name')
+            return result[:3]
+        return []

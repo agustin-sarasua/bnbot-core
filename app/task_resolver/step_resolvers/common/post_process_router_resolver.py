@@ -59,17 +59,8 @@ class PostProcessRouterResolver(StepResolver):
     def __init__(self, steps):
         self.steps = steps
         self.next_step_extractor = NextStepExtractor()
-        self.forced_next_step: str = None
-    
-    def _get_forced_next_step(self):
-        self.forced_next_step = self.data.get("forced_next_step", None)
 
     def run(self, messages: List[Message], previous_steps_data: dict=None, step_chat_history: List[Message] = None) -> Message:
-        self.forced_next_step = self._get_forced_next_step()
-
-        if self.forced_next_step is not None:
-            logger.debug(f"Forcing re-routing to step: {self.forced_next_step}")
-            return Message.route_message(self.forced_next_step)
         
         result = self.next_step_extractor.run_select_next_step(messages, self.steps)
         return Message.route_message("Routing to previous Step", result["step_id"]) 
