@@ -1,7 +1,8 @@
 from app.task_resolver.engine import Task, Step
 from app.task_resolver.step_resolvers import GatherBusinessInfoResolver, BusinessSelectionResolver, PostProcessRouterResolver
+from app.integrations import OpenAIClient
 
-def create_select_business_task():
+def create_select_business_task(openai_integration: OpenAIClient = None):
     # exit_task_step = Step("EXIT_TASK_STEP", ExitTaskResolver(), force_execution=True, reply_when_done=False)
     gather_business_info_step = Step("GATHER_BUSINESS_INFO", GatherBusinessInfoResolver(), reply_when_done=False)
     business_selection_step = Step("BUSINESS_SELECTION", BusinessSelectionResolver(backend_url="http://web:8080"), reply_when_done=False)
