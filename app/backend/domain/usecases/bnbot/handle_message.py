@@ -65,7 +65,7 @@ class HandleMessageUseCase:
         try:
             response = self.main_flow(message=user_message, customer_number=customer_number)
             if response is not None and response != "":
-                self.twilio_integration.send_message(customer_number, response)
+                self.twilio_integration.send_message(customer_number, response.text)
             return response
         except Exception as e:
             traceback.print_exc()

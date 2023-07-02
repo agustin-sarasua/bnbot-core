@@ -180,10 +180,10 @@
     ]
 },
 {
-    "business_id": "asdfasdfasdfasdf",
+    "business_id": "complejo_enrique_joaquin_id",
     "business_name": "Complejo Enrique Joaquin",
     "description": "Complejo de campo muy bueno",
-    "bnbot_id": "@complejo_enrique_joaquin",
+    "bnbot_id": "@complejo.enrique.joaquin",
     "bnbot_configuration": {
         "booking_deposit": 0.1,
         "pre_book_time": 60

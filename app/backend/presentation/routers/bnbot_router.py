@@ -25,8 +25,10 @@ async def handle_message(Body: str = Form(),
     try:
         user_message = Message.user_message(Body)
         result = usecase.execute(user_message=user_message, customer_number=From)
-        response = {"statusCode": 200, "body": result}
-        return response
+        if result is not None:
+            response = {"statusCode": 200, "body": result.text}
+            return response
+        return {"statusCode": 500}
     except Exception as e:
         traceback.print_exc()
         logger.error(f"Exception {str(e)}")

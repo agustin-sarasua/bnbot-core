@@ -12,7 +12,7 @@ auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
 twilio_number = os.environ.get('TWILIO_NUMBER')
 openai_token = os.environ.get('OPENAI_API_KEY')
 
-init_backend(account_sid, auth_token, twilio_number, openai_token)
+# init_backend(account_sid, auth_token, twilio_number, openai_token)
 
 app = FastAPI()
 

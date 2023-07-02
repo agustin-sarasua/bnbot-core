@@ -22,8 +22,12 @@ json_fn = {
                 "type": "string",
                 "description": "The id of the business the user has chosen."
             },
+            "bnbot_id": {
+                "type": "string",
+                "description": "The bnbot_id of the business the user has chosen."
+            },
         },
-        "required": ["business_id"]
+        "required": ["business_id", "bnbot_id"]
     }
 }
 
@@ -31,7 +35,7 @@ class BusinessSelectedExtractor:
 
     def run(self, messages: List[Message], available_businesses: str):
 
-        formatted_system_message = system_message.format(businesses_info=available_businesses)
+        formatted_system_message = system_message.format(available_businesses=available_businesses)
 
         messages_input = [{"role": "system", "content": formatted_system_message}]
         for msg in messages:

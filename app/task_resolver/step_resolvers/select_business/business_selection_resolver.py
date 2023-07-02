@@ -33,6 +33,8 @@ response to th user:
 
 class BusinessSelectionResolver(StepResolver):
     
+    backend_api_client: BackendAPIClient
+
     def __init__(self, backend_url: str):
         self.backend_api_client = BackendAPIClient(backend_url)
         super().__init__()
@@ -49,13 +51,14 @@ class BusinessSelectionResolver(StepResolver):
             idx +=1
         return formatted_string
 
-    def _format_business_json(self, properties):
+    def _format_business_json(self, businesses):
         data = []
-        for _, property_data in properties.items():
+        for business in businesses:
             data.append({
-                "business_name": property_data['business_name'],
-                "business_id": property_data['business_id'],
-                "location": property_data['location']
+                "business_name": business['business_name'],
+                "business_id": business['business_id'],
+                "bnbot_id": business['bnbot_id'],
+                "location": business['location']
             })
         return json.dumps(data)
 
@@ -67,12 +70,12 @@ class BusinessSelectionResolver(StepResolver):
         logger.debug(f"list_businesses input {business_info}")
         businesses = self.backend_api_client.list_businesses(json.dumps(business_info))
 
-        if len(business_info) == 0:
+        if len(businesses) == 0:
             # Not found
             businesses_info = "Unfortunately there are no businesses available."
             # Inform, came back to previous step, erase previous step data
             self.data["forced_next_step"] = "GATHER_BUSINESS_INFO"
-        elif len(business_info) == 1:
+        elif len(businesses) == 1:
             # Stay here and confirm that the property is the correct one
             businesses_info = self._format_business_json(businesses)
         else:
@@ -87,7 +90,7 @@ class BusinessSelectionResolver(StepResolver):
         
         if not self.data["step_first_execution"]:
             extractor = BusinessSelectedExtractor()
-            extractor_result = extractor.run(messages, businesses_info)
+            extractor_result = extractor.run(messages, businesses)
 
             if extractor_result["user_has_selected"]:
                 self.data["business_info"] = extractor_result
