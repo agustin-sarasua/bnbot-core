@@ -1,12 +1,41 @@
 from app.task_resolver.engine import StepResolver, Message
 from app.task_resolver.engine import StepData
 from typing import List, Any
-from app.tools import PropertiesFilterTool, PropertySelectedExtractor, HouseSelectionAssistantTool
+from app.tools import PropertiesFilterTool, BusinessSelectedExtractor, HouseSelectionAssistantTool
 from app.utils import logger
 import json
+from app.integrations.backend import BackendAPIClient
+from app.utils import get_completion_from_messages
+
+system_message = """You are an Assistant that helps the user select an business \
+from a list of available businesses that rent houses for short stays.
+Your task is only to help the user find the business he is looking for.
+
+These are the available businesses to choose from:
+{businesses_info}
+
+Follow these steps before responding to the user:
+
+Step 1: Count the number of available businesses to choose from.
+
+Step 2: If there are no businesses available, tell the user that we have not find the business \
+and suggest him to visit the site https://reservamedirecto.com and find the business ID from there.
+
+Step 3: If there is only one business available, ask the user to confirm if that is the business he was looking for \
+by showing him a summary of it.
+
+Step 4: If there are multiple business available, ask the user to choose one from the list.
+
+You respond in a short, very conversational friendly style.
+response to th user: 
+"""
 
 class BusinessSelectionResolver(StepResolver):
     
+    def __init__(self, backend_url: str):
+        self.backend_api_client = BackendAPIClient(backend_url)
+        super().__init__()
+
     def _format_json(self, properties):
         formatted_string = ''
         idx = 1
@@ -19,13 +48,13 @@ class BusinessSelectionResolver(StepResolver):
             idx +=1
         return formatted_string
 
-    def _format_property_json(self, properties):
+    def _format_business_json(self, properties):
         data = []
-        idx = 1
         for _, property_data in properties.items():
             data.append({
-                "property_id": property_data['property_id'],
-                "name": property_data['name']
+                "business_name": property_data['business_name'],
+                "business_id": property_data['business_id'],
+                "location": property_data['location']
             })
         return json.dumps(data)
 
@@ -34,45 +63,44 @@ class BusinessSelectionResolver(StepResolver):
         gather_business_info_step_data: StepData = previous_steps_data["GATHER_BUSINESS_INFO"]
         business_info = gather_business_info_step_data.resolver_data["business_info"]
 
-        # property_loader = PropertiesFilterTool()
-        # if "properties_available" not in self.data:
-        #     logger.debug(f"Calling tool with: {booking_info}")
-        #     properties_available = property_loader.run(booking_info["check_in_date"], booking_info["check_out_date"], booking_info["num_guests"])
-        #     logger.debug(f"{self.__class__.__name__} - Properties available: {properties_available}")
-        #     self.data["properties_available"] = properties_available
+        logger.debug(f"list_businesses input {business_info}")
+        businesses = self.backend_api_client.list_businesses(json.dumps(business_info))
 
-        # properties_available = self.data["properties_available"]
+        if len(business_info) == 0:
+            # Not found
+            businesses_info = "Unfortunately there are no businesses available."
+            # Inform, came back to previous step, erase previous step data
+            pass
+        elif len(business_info) == 1:
+            # Confirm
+            businesses_info = self._format_business_json(businesses)
+            # Stay here and confirm that the property is the correct one
+            pass
+        else:
+            # Select 1
+            businesses_info = self._format_business_json(businesses)
+            # Select 1 from the list found and confirm.
+            pass
+        
+        formatted_system_message = system_message.format(businesses_info=businesses_info)
 
-        # if len(properties_available.items()) == 0:
-        #     properties_info = "Unfortunately there are no properties available."
-        # else:
-        #     properties_info = self._format_json(properties_available)
-
-        # chat_history = self.build_chat_history(messages)
-        # assistant = HouseSelectionAssistantTool()
-        # assistant_response = assistant.run(chat_history, properties_info)
+        chat_input = self.build_messages_from_conversation(formatted_system_message, messages)
+        assistant_response = get_completion_from_messages(chat_input)
 
         
-        # if not self.data["step_first_execution"]:
-        #     # There is not need to execute the PropertySelected if it is the first time executing this step.
-        #     prop_extractor = PropertySelectedExtractor()
-        #     prop_extractor_result = prop_extractor.run(messages)
+        if not self.data["step_first_execution"]:
+            extractor = BusinessSelectedExtractor()
+            extractor_result = extractor.run(messages, businesses_info)
 
-        #     if prop_extractor_result["user_has_selected"]:
-        #         properties_ids = self._format_property_json(properties_available)
-        #         prop_extractor_result = prop_extractor.run_load_property_id(properties_ids, prop_extractor_result["property_name"])
-        #         if "property_id" in prop_extractor_result and  prop_extractor_result["property_id"] is not None and prop_extractor_result["property_id"] != "":
-        #             self.data["property_picked_info"] = {
-        #                 "property_id": prop_extractor_result["property_id"],
-        #                 "price_per_night": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price'])}",
-        #                 "total_price": f"{properties_available[prop_extractor_result['property_id']]['currency']} {float(properties_available[prop_extractor_result['property_id']]['price']) * float(booking_info['num_nights'])}"
-        #             }
+            if extractor_result["user_has_selected"]:
+                self.data["business_info"] = extractor_result
+
         return Message.assistant_message(assistant_response)
     
     def is_done(self):
-        if "property_picked_info" not in self.data:
+        if "business_info" not in self.data:
             return False
         
         # TODO validate that the property_picked is valid agains the properties_available.
-        return (self.data["property_picked_info"]["property_id"] != "" and 
-                self.data["property_picked_info"]["property_id"] is not None)
+        return (self.data["business_info"]["business_id"] != "" and 
+                self.data["business_info"]["business_id"] is not None)

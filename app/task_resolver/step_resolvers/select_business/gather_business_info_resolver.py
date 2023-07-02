@@ -53,29 +53,16 @@ response to th user: """
 
 class GatherBusinessInfoResolver(StepResolver):
     
-    def build_messages_from_conversation(self, messages: List[Message]):
-        result = [{'role':'system', 'content': system_message}]
-        for msg in messages:
-            result.append({'role': msg.role, 'content': msg.text})
-        return result
     
     def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         
         business_search_data_extractor = BusinessSearchDataExtractor()
-        chat_input = self.build_messages_from_conversation(messages)
+        chat_input = self.build_messages_from_conversation(system_message, messages)
         assistant_response = get_completion_from_messages(chat_input)
 
         business_info = business_search_data_extractor.run(messages)
         
         self.data["business_info"] = business_info
-        # if business_info is not None:
-        #     checkin_date = business_info.get("location", None)
-        #     checkout_date = booking_info.get("business_id", None)
-        #     # num_nights = booking_info["num_nights"]
-        #     num_guests = booking_info.get("business_name", None)
-
-        #     if checkin_date is not None and checkout_date is not None and num_guests > 0:
-        #         self.data["booking_information"] = booking_info
 
         return Message.assistant_message(assistant_response)
     
