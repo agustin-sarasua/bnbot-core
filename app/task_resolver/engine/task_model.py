@@ -53,12 +53,6 @@ class StepResolver(ABC):
             chat_history += f"{msg.role}: {msg.text}\n"
         return chat_history[:-1]
 
-    def build_messages_from_conversation(self, system_message, messages: List[Message]):
-        result = [{'role':'system', 'content': system_message}]
-        for msg in messages:
-            result.append({'role': msg.role, 'content': msg.text})
-        return result
-
 class StepData:
     input_messages: List[Message]
     previous_steps_data: dict

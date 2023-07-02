@@ -4,8 +4,8 @@ from typing import List, Any
 from app.tools import PropertiesFilterTool, BusinessSelectedExtractor, HouseSelectionAssistantTool
 from app.utils import logger
 import json
-from app.integrations.backend import BackendAPIClient
 from app.utils import get_completion_from_messages
+from app.integrations import OpenAIClient, BackendAPIClient
 
 system_message = """You are an Assistant that helps the user select an business \
 from a list of available businesses that rent houses for short stays.
@@ -84,7 +84,7 @@ class BusinessSelectionResolver(StepResolver):
         
         formatted_system_message = system_message.format(businesses_info=businesses_info)
 
-        chat_input = self.build_messages_from_conversation(formatted_system_message, messages)
+        chat_input = OpenAIClient.build_messages_from_conversation(formatted_system_message, messages)
         assistant_response = get_completion_from_messages(chat_input)
 
         

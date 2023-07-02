@@ -4,6 +4,7 @@ from app.utils import get_completion_from_messages
 from app.tools import SearchDataExtractor
 from typing import List, Any
 from datetime import datetime, timedelta
+from app.integrations import OpenAIClient
 
 delimiter = "####"
 #The only information you need is: check-in date, check-out date and number of guests staying.
@@ -33,11 +34,6 @@ class GatherBookingInfoResolver(StepResolver):
         checkout_date = checkout_datetime.strftime('%Y-%m-%d')
         return checkout_date
     
-    def build_messages_from_conversation(self, messages: List[Message]):
-        result = [{'role':'system', 'content': system_message}]
-        for msg in messages:
-            result.append({'role': msg.role, 'content': msg.text})
-        return result
     
     def run(self, messages: List[Message], previous_steps_data: dict, step_chat_history: List[Message] = None) -> Message:
         
@@ -49,7 +45,7 @@ class GatherBookingInfoResolver(StepResolver):
         # chat_history = self.build_chat_history(messages)
         
         search_data_extractor = SearchDataExtractor()
-        chat_input = self.build_messages_from_conversation(messages)
+        chat_input = OpenAIClient.build_messages_from_conversation(system_message, messages)
         assistant_response = get_completion_from_messages(chat_input)
 
         booking_info = search_data_extractor.run(messages)
