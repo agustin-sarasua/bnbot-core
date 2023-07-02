@@ -1,7 +1,8 @@
-from app.task_resolver.engine import StepResolver, StepData, Message
+from app.task_resolver.engine import StepResolver, StepData
 from app.tools import BookingConfirmationChain
 from app.utils import logger
 from typing import List, Any
+from app.model import Message
 
 class BookingConfirmationResolver(StepResolver):
 

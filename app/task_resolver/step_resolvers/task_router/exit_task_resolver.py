@@ -1,4 +1,4 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 
 from typing import List, Any
 from app.task_resolver.engine import StepResolver
@@ -9,6 +9,7 @@ from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
+from app.model import Message
 
 from langchain.chat_models import ChatOpenAI
 from app.utils import chain_verbose

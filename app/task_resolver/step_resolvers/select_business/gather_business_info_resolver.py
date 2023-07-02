@@ -1,10 +1,11 @@
-from app.task_resolver.engine import StepResolver, StepData, Message
+from app.task_resolver.engine import StepResolver, StepData
 from app.utils import logger
 from app.utils import get_completion_from_messages
 from app.tools import BusinessSearchDataExtractor
 from typing import List, Any
 from datetime import datetime, timedelta
 from app.integrations import OpenAIClient
+from app.model import Message
 
 
 system_message="""You are an Assistant that gathers information from the user about booking an accommodation. 

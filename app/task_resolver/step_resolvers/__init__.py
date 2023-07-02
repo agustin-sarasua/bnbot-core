@@ -1,6 +1,7 @@
 from app.task_resolver.step_resolvers.common.post_process_router_resolver import PostProcessRouterResolver
 
 from app.task_resolver.step_resolvers.select_business.gather_business_info_resolver import GatherBusinessInfoResolver
+from app.task_resolver.step_resolvers.select_business.business_selection_resolver import BusinessSelectionResolver
 
 from app.task_resolver.step_resolvers.make_reservation.gather_booking_info_resolver import GatherBookingInfoResolver
 from app.task_resolver.step_resolvers.make_reservation.house_selection_resolver import HouseSelectionResolver

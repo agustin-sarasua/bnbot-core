@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 from typing import List, Any, Dict
 from app.tools import SearchDataExtractor
-from app.task_resolver.engine import Message
+from app.model import Message
 from datetime import datetime
 from unittest.mock import patch
 

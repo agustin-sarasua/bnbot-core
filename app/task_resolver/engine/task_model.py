@@ -1,36 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import List, Any
+from typing import List, Any, Optional
 from app.utils import logger
 import uuid
 import copy
 from datetime import datetime
-
-class Message:
-
-    def __init__(self, role: str, text: str, key: str = None):
-        self.key = key
-        self.text = text
-        self.role = role
-        self.id = uuid.uuid4()
-        self.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    @staticmethod
-    def assistant_message(text):
-        return Message("assistant", text)
-    
-    @staticmethod
-    def route_message(text: str, key: str):
-        return Message("route", text, key)
-    
-    @staticmethod
-    def user_message(text):
-        return Message("user", text)
-    
-    def __str__(self):
-        return f"{self.role}: {self.text}"
-    
-    def __repr__(self):
-        return str(self)
+from app.model import Message
 
 class StepResolver(ABC):
     
@@ -132,12 +106,10 @@ class Task:
     steps: List[Step]
     data: dict
 
-    current_step: Step
-    
     def __init__(self, name: str, steps: List[Step]):
         self.name = name
         self.steps = steps
-        self.current_step = self.steps[0]
+        self.next_task: Optional[Task] = None
     
     def is_done(self) -> bool:
         for step in self.steps:
@@ -164,6 +136,9 @@ class Task:
             return None
         if self.is_done():
             logger.info(f"Task {self.name} DONE, returning None")
+            if self.next_task is not None:
+                logger.info(f"Next Task to execute {self.next_task.name}")
+                self.next_task.data["previous_task_data"] = self.data
             return None
         previous_steps_data = {}
         route_to_previous_step = False
@@ -179,6 +154,7 @@ class Task:
                 # Check post process router
                 if step.post_process_router_resolver is not None:
                     logger.debug(f"Task: {self.name} - Do we have to route to other space?")
+                    step.post_process_router_resolver.data = step.data
                     next_step: Message = step.post_process_router_resolver.run(step.data.step_chat_history, previous_steps_data)
                     if next_step.key != "OTHER":
                         logger.debug(f"Task: {self.name} - Routing to {next_step.key}")

@@ -1,5 +1,5 @@
 from typing import List
-from app.task_resolver.engine import Message
+from app.model import Message
 import openai
 import os
 import json
@@ -14,10 +14,6 @@ json_fn = {
     "parameters": {
         "type": "object",
         "properties": {
-            # "user_has_selected": {
-            #     "type": "boolean",
-            #     "description": "Has the user chosen one option from the available properties?"
-            # },
             "property_name": {
                 "type": "string",
                 "description": "The name of the property the user has chosen."

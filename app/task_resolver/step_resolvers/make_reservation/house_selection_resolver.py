@@ -1,9 +1,10 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 from app.task_resolver.engine import StepData
 from typing import List, Any
 from app.tools import PropertiesFilterTool, PropertySelectedExtractor, HouseSelectionAssistantTool
 from app.utils import logger
 import json
+from app.model import Message
 
 class HouseSelectionResolver(StepResolver):
     

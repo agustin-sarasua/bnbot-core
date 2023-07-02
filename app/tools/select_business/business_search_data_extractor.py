@@ -1,5 +1,5 @@
 from typing import List
-from app.task_resolver.engine import Message
+from app.model import Message
 import openai
 import os
 import json

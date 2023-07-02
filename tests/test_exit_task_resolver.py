@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
-from app.task_resolver.engine import ExitTaskResolver, Message
+from app.task_resolver.step_resolvers import ExitTaskResolver
+from app.model import Message
 
 import openai
 from dotenv import load_dotenv, find_dotenv

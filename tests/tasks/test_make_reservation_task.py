@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock
 from typing import List, Any, Dict
-from app.task_resolver.engine import TaskIdentifierResolver
+from app.task_resolver.step_resolvers import TaskIdentifierResolver
 
 class TestMakeReservationTask(unittest.TestCase):
 

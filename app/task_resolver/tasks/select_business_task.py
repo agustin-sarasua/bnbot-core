@@ -1,9 +1,10 @@
 from app.task_resolver.engine import Task, Step
-# from app.task_resolver.step_resolvers import GatherBookingInfoResolver, HouseSelectionResolver, GatherUserInfoResolver, BookingConfirmationResolver, ExitTaskResolver, PostProcessRouterResolver
+from app.task_resolver.step_resolvers import GatherBusinessInfoResolver, BusinessSelectionResolver, PostProcessRouterResolver
 
-def create_make_reservation_task():
+def create_select_business_task():
     # exit_task_step = Step("EXIT_TASK_STEP", ExitTaskResolver(), force_execution=True, reply_when_done=False)
-    # gather_booking_info_step = Step("GATHER_BOOKING_INFO", GatherBookingInfoResolver(), reply_when_done=False)
+    gather_business_info_step = Step("GATHER_BUSINESS_INFO", GatherBusinessInfoResolver(), reply_when_done=False)
+    business_selection_step = Step("BUSINESS_SELECTION", BusinessSelectionResolver(backend_url="http://web:8080"), reply_when_done=False)
     
     # house_selection_step = Step(
     #     name="HOUSE_SELECTION", 
@@ -27,9 +28,8 @@ def create_make_reservation_task():
     #     # ])
     # )
 
-    # reservation_task = Task(
-    #     "RESERVATION_TASK", 
-    #     [gather_booking_info_step, house_selection_step, gather_user_info_step, booking_confirmation_step])
+    task = Task(
+        "SELECT_BUSINESS_TASK", 
+        [gather_business_info_step, business_selection_step])
 
-    # return reservation_task
-    pass
+    return task

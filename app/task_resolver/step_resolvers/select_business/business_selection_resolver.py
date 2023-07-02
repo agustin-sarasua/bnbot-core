@@ -1,4 +1,4 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 from app.task_resolver.engine import StepData
 from typing import List, Any
 from app.tools import PropertiesFilterTool, BusinessSelectedExtractor, HouseSelectionAssistantTool
@@ -6,6 +6,7 @@ from app.utils import logger
 import json
 from app.utils import get_completion_from_messages
 from app.integrations import OpenAIClient, BackendAPIClient
+from app.model import Message
 
 system_message = """You are an Assistant that helps the user select an business \
 from a list of available businesses that rent houses for short stays.
@@ -70,17 +71,13 @@ class BusinessSelectionResolver(StepResolver):
             # Not found
             businesses_info = "Unfortunately there are no businesses available."
             # Inform, came back to previous step, erase previous step data
-            pass
+            self.data["forced_next_step"] = "GATHER_BUSINESS_INFO"
         elif len(business_info) == 1:
-            # Confirm
-            businesses_info = self._format_business_json(businesses)
             # Stay here and confirm that the property is the correct one
-            pass
-        else:
-            # Select 1
             businesses_info = self._format_business_json(businesses)
+        else:
             # Select 1 from the list found and confirm.
-            pass
+            businesses_info = self._format_business_json(businesses)
         
         formatted_system_message = system_message.format(businesses_info=businesses_info)
 

@@ -5,7 +5,7 @@ import os
 import openai
 from datetime import datetime
 from typing import List, Any
-from app.task_resolver.engine import Message
+from app.model import Message
 
 
 class OpenAIClient:

@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from app.task_resolver.engine import Message, StepData
+from app.model import Message, StepData
 from app.task_resolver.step_resolvers import GatherBookingInfoResolver
 
 import openai

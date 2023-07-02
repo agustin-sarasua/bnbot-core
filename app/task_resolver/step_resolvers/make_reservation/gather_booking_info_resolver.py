@@ -1,10 +1,11 @@
-from app.task_resolver.engine import StepResolver, StepData, Message
+from app.task_resolver.engine import StepResolver, StepData
 from app.utils import logger
 from app.utils import get_completion_from_messages
 from app.tools import SearchDataExtractor
 from typing import List, Any
 from datetime import datetime, timedelta
 from app.integrations import OpenAIClient
+from app.model import Message
 
 delimiter = "####"
 #The only information you need is: check-in date, check-out date and number of guests staying.
