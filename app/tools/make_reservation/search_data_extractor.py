@@ -95,7 +95,7 @@ class SearchDataExtractor:
     def calculate_check_in_date(self, check_in_date, check_in_dow):
         if check_in_date is not None:
             if check_in_date > get_current_datetime().strftime("%Y-%m-%d"):
-                return check_in_date
+                return datetime.strptime(check_in_date, "%Y-%m-%d")
             else:
                 logger.debug(f"check_in_date is from the passt: {check_in_date}")        
         if check_in_dow is not None:
@@ -108,7 +108,7 @@ class SearchDataExtractor:
     def calculate_check_out_date(self, check_in_date: str, check_out_date: str, check_out_dow: str, num_nights: int):
         if check_out_date is not None:
             if check_out_date > get_current_datetime().strftime("%Y-%m-%d") and check_out_date > check_in_date:
-                return check_out_date
+                return datetime.strptime(check_out_date, "%Y-%m-%d")
             else:
                 logger.debug(f"""check_out_date is wrong. 
                              check_out_date: {check_out_date}, 

@@ -14,7 +14,7 @@ class SelectBusinessTask(Task):
         
         business_selection_step = Step(name="BUSINESS_SELECTION", 
                                        resolver = BusinessSelectionResolver(backend_url="http://web:80"), 
-                                       reply_when_done=True)
+                                       reply_when_done=False)
         
         super().__init__(name="SELECT_BUSINESS_TASK", 
                          steps=[gather_business_info_step, business_selection_step])

@@ -23,6 +23,7 @@ class BackendAPIClient:
 
         response = list_businesses_sync(load_businesses)
         if response.status_code == 200:
-            return response.json()
+            return json.loads(response.body.decode())
         else:
             return []
+        

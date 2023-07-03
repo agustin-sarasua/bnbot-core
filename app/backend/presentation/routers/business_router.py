@@ -33,7 +33,7 @@ def list_businesses_sync(load_businesses: LoadBusinesses) -> JSONResponse:
     try:
         result = list_business_use_case.execute(load_businesses)
         business_dicts = [business.dict() for business in result]
-        return JSONResponse(content=business_dicts, status_code=500)
+        return JSONResponse(content=business_dicts, status_code=200)
     except Exception as e:
         traceback.print_exc()
         logger.error(f"Exception {str(e)}")

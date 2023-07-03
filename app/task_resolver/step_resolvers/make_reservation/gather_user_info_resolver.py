@@ -4,8 +4,6 @@ from app.utils import get_completion_from_messages, logger
 from app.tools import UserInformationExtractorChain
 from app.model import Message
 
-delimiter = "####"
-
 class GatherUserInfoResolver(StepResolver):
 
     def run(self, messages: List[Message], previous_steps_data: List[Any], step_chat_history: List[Message] = None) -> Message:

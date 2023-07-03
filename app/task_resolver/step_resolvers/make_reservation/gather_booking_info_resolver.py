@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from app.integrations import OpenAIClient
 from app.model import Message
 
-delimiter = "####"
 #The only information you need is: check-in date, check-out date and number of guests staying.
 system_message =f"""
 You are an Assistant that gathers information from the user about booking an accommodation. 

@@ -32,7 +32,8 @@ class HandleMessageUseCase:
                 self.system.save_context(CustomerContext(customer_number, Conversation(), create_task_router_task()))
                 return Message.assistant_message("Gracias, la conversacion fue reiniciada. Si deseas realizar otra tarea vuelve a escribirnos.")
 
-        conversation._add_message(message)
+        if message is not None:
+            conversation._add_message(message)
         task_result: Message = current_task.run(conversation.get_messages())
         if current_task.is_done():
             if not current_task.steps[-1].reply_when_done:
@@ -40,7 +41,8 @@ class HandleMessageUseCase:
                 if current_task is not None:
                     customer_context.current_task = current_task
                     task_result: Message = current_task.run(conversation.get_messages())
-                    conversation._add_message(task_result)
+                    if task_result is not None:
+                        conversation._add_message(task_result)
                     self.system.save_context(customer_context)
                 else:
                     # Reset Conversation
@@ -60,6 +62,7 @@ class HandleMessageUseCase:
             logger.error(f"Exception {str(e)}")
             if customer_number is not None:
                 self.twilio_integration.send_message(customer_number, "Lo siento, tuvimos un problema :(. Intenta mas tarde.")
+                self.system.save_context(CustomerContext(customer_number, Conversation(), create_task_router_task()))
             return None
 
         
