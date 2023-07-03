@@ -11,7 +11,7 @@ from app.utils import logger
 
 from app.backend.presentation.routers import reservation_router, business_router, bnbot_router
 
-from app.backend.domain.usecases import CreateReservationUseCase, CreateBusinessUseCase, ListBusinessUseCase, HandleMessageUseCase
+from app.backend.domain.usecases import *
 from app.backend.infraestructure.repositories import ReservationRepository, BusinessRepository
 from app.integrations import TwilioMessagingAPI
 from app.model import System
@@ -40,6 +40,7 @@ def init_backend(account_sid, auth_token, twilio_number, openai_token):
     business_repository = BusinessRepository(aws_access_key_id, aws_secret_access_key, region, dynamo_url)
     business_router.create_business_use_case = CreateBusinessUseCase(business_repository)
     business_router.list_business_use_case = ListBusinessUseCase(business_repository)
+    business_router.update_availability_use_case = UpdateAvailabilityUseCase(business_repository)
 
     system = System()
     twilio_integration = TwilioMessagingAPI(account_sid, auth_token, twilio_number)
