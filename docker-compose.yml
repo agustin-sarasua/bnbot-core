@@ -35,9 +35,5 @@ services:
       - dynamodb-local
     links:
       - dynamodb-local
-    environment:
-      DATABASE_URL: 'postgresql://myuser:mypassword@db/mydatabase'
-      AWS_ACCESS_KEY_ID: 'DUMMYIDEXAMPLE'
-      AWS_SECRET_ACCESS_KEY: 'DUMMYEXAMPLEKEY'
-      REGION: 'us-east-1'
-      DYNAMO_DB_URL: 'http://dynamodb-local:8000'
+    env_file:
+      - .env

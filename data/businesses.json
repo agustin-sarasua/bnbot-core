@@ -34,7 +34,7 @@
         {
             "property_id": "CampSite1",
             "name": "Camp Site 1",
-            "other_calendar_links": ["https://booking.com/camp-site-1/calendar"],
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
             "description": "Secluded campsite near the river with a fire pit and picnic table.",
             "amenities": ["Fire Pit", "Picnic Table", "Portable Restroom"],
             "price_per_night": 20.0,
@@ -79,7 +79,7 @@
         {
             "property_id": "VillaBella",
             "name": "Villa Bella",
-            "other_calendar_links": ["https://booking.com/villa-bella/calendar"],
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
             "description": "Experience luxury in this exquisite villa with an infinity pool and a panoramic view of the mountains.",
             "amenities": ["Wi-Fi", "Private Parking", "Infinity Pool", "Fitness Center"],
             "price_per_night": 500.0,
@@ -124,7 +124,7 @@
         {
             "property_id": "LodgeOne",
             "name": "Lodge One",
-            "other_calendar_links": ["https://booking.com/lodge-one/calendar"],
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
             "description": "A cozy lodge with a fireplace, perfect for couples or small families.",
             "amenities": ["Wi-Fi", "Private Parking", "Pet-friendly", "Fireplace"],
             "price_per_night": 150.0,
@@ -169,7 +169,7 @@
         {
             "property_id": "CasaGrande",
             "name": "Casa Grande",
-            "other_calendar_links": ["https://booking.com/casa-grande/calendar"],
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
             "description": "A spacious villa with rustic interiors, private garden, and an outdoor pool.",
             "amenities": ["Wi-Fi", "Private Parking", "Pet-friendly", "Outdoor Pool"],
             "price_per_night": 300.0,
