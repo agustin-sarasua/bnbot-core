@@ -35,7 +35,7 @@ All the code for the enginse is under:
 
 ## System components
 
-![System Components](doc/business_model.png)
+![System Components](doc/components.png)
 
 ## Class model for the BNBOT backend
 
