@@ -33,6 +33,10 @@ All the code for the enginse is under:
 
 # Backend
 
+El backend es una API using FastAPI. 
+- It uses Clean Architecture Pattern, basically is:
+- Presentation (routers) -> UseCases -> Repository -> (DB). For example, to create a reservation you have: reservation_router -> create_reservation_use_case -> reservation_respotiory -> Posgres DB
+
 ## System components
 
 ![System Components](doc/components.png)
