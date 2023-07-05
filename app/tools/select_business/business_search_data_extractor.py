@@ -12,7 +12,7 @@ openai.api_key = os.environ.get('OPENAI_API_KEY')
 
 json_fn = {
     "name": "calculate_business_info",
-    "description": "Gathers all the available properties based on the location, business_id, business name or business owner.",
+    "description": "Gathers all the available properties based on the location, bnbot_id, business name or business owner.",
     "parameters": {
         "type": "object",
         "properties": {

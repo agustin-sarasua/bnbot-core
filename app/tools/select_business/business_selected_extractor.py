@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-system_message = """Save the business_id of the business chosen by the user if the user has chosen one already.
+system_message = """Save the bnbot_id of the business chosen by the user if the user has chosen one already.
 Here are the available businesses:
 {available_businesses}"""
 
@@ -18,16 +18,12 @@ json_fn = {
     "parameters": {
         "type": "object",
         "properties": {
-            "business_id": {
-                "type": "string",
-                "description": "The id of the business the user has chosen."
-            },
             "bnbot_id": {
                 "type": "string",
                 "description": "The bnbot_id of the business the user has chosen."
             },
         },
-        "required": ["business_id", "bnbot_id"]
+        "required": ["bnbot_id"]
     }
 }
 
@@ -50,7 +46,7 @@ class BusinessSelectedExtractor:
         )
         if "function_call" in response.choices[0].message and "arguments" in response.choices[0].message["function_call"]:
             fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
-            fn_parameters["user_has_selected"] = ("business_id" in fn_parameters and fn_parameters["business_id"] != "")
+            fn_parameters["user_has_selected"] = ("bnbot_id" in fn_parameters and fn_parameters["bnbot_id"] != "")
             logger.debug(f"set_business_selected fn_parameters {fn_parameters}")
             return fn_parameters
         

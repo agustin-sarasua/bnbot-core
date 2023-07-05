@@ -21,8 +21,8 @@ class SelectBusinessTask(Task):
 
     def get_next_task(self) -> Optional[Task]:
         if self.is_done():
-            if (self.steps[-1].data.resolver_data["business_info"]["business_id"] is not None and
-                self.steps[-1].data.resolver_data["business_info"]["business_id"] != ""):
+            if (self.steps[-1].data.resolver_data["business_info"]["bnbot_id"] is not None and
+                self.steps[-1].data.resolver_data["business_info"]["bnbot_id"] != ""):
                 return create_make_reservation_task()
         return None
     

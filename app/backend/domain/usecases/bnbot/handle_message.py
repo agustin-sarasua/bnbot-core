@@ -27,18 +27,27 @@ class HandleMessageUseCase:
         if current_task.is_done():
             if current_task.get_next_task() is not None:
                 logger.debug(f"Moving to the next Task -> {current_task.get_next_task().name}")
-                current_task = current_task.get_next_task()
+                logger.debug(f"Updating previous task data for {current_task.get_next_task().name}")
+                next_task = current_task.get_next_task()
+                next_task.previous_task_data = current_task.data
+                current_task = next_task
             else:
                 self.system.save_context(CustomerContext(customer_number, Conversation(), create_task_router_task()))
                 return Message.assistant_message("Gracias, la conversacion fue reiniciada. Si deseas realizar otra tarea vuelve a escribirnos.")
 
         if message is not None:
             conversation._add_message(message)
+
         task_result: Message = current_task.run(conversation.get_messages())
         if current_task.is_done():
             if not current_task.steps[-1].reply_when_done:
-                current_task = current_task.get_next_task()
-                if current_task is not None:
+                next_task = current_task.get_next_task()
+
+                if next_task is not None:
+                    logger.debug(f"Updating previous task data for {current_task.get_next_task().name}")
+                    next_task.previous_task_data = current_task.data
+                    current_task = next_task
+
                     customer_context.current_task = current_task
                     task_result: Message = current_task.run(conversation.get_messages())
                     if task_result is not None:
@@ -48,6 +57,16 @@ class HandleMessageUseCase:
                     # Reset Conversation
                     self.system.save_context(CustomerContext(customer_number, Conversation(), create_task_router_task()))
                     return Message.assistant_message("Gracias, la conversacion fue reiniciada. Si deseas realizar otra tarea vuelve a escribirnos.")
+            else:
+                # The task is Done and we have to reply to the User.
+                if task_result is not None:
+                    conversation._add_message(task_result)
+                    self.system.save_context(customer_context)
+        else:
+            # The task is not Dane and we need to reply the user.
+            if task_result is not None:
+                conversation._add_message(task_result)
+                self.system.save_context(customer_context)
         return task_result
     
 

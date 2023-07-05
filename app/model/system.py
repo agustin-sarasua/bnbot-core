@@ -14,8 +14,7 @@ class CustomerContext:
 
 class System:
 
-    def __init__(self, assistant_number="test-number"):
-        self.assistant_number: str = assistant_number
+    def __init__(self):
         self.context_cache: Cache = Cache(60*24*60) # 24 hours
 
     def get_context(self, customer_number: str) -> CustomerContext:

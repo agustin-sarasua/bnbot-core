@@ -68,7 +68,6 @@ class BusinessSelectionResolver(StepResolver):
         idx = 1
         for business in businesses:
             formatted_string += f"""{idx}. business_name: {business['business_name']}
-business_id: {business['business_id']}
 bnbot_id: {business['bnbot_id']}
 address: {business['address']}"
 city: {business['city']}"\n"""
@@ -79,7 +78,6 @@ city: {business['city']}"\n"""
         data = []
         for business in businesses:
             data.append({
-                "business_id": business['business_id'],
                 "business_name": business['business_name'],
                 "bnbot_id": business['bnbot_id'],
                 "address":f"{business['location']['address']}",
@@ -104,7 +102,7 @@ city: {business['city']}"\n"""
             self.data["business_info"] = {
                 "properties_available": False,
                 "user_has_selected": False,
-                "business_id": ""
+                "bnbot_id": ""
             }
             # formatted_system_message = system_message.format(businesses_info=self._format_json(businesses_info))
 
@@ -127,10 +125,10 @@ city: {business['city']}"\n"""
     
         if not self.data["step_first_execution"] and len(business_list) > 0:
             extractor = BusinessSelectedExtractor()
-            extractor_result = extractor.run(messages, business_list)
+            extractor_result = extractor.run(messages, self._format_json(businesses_info))
 
             if extractor_result["user_has_selected"]:
-                self.data["business_info"]["business_id"] = extractor_result["business_id"]
+                self.data["business_info"]["bnbot_id"] = extractor_result["bnbot_id"]
                 self.data["business_info"]["user_has_selected"] = extractor_result["user_has_selected"]
                 
         return Message.assistant_message(assistant_response)

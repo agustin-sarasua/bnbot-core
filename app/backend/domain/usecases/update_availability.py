@@ -133,13 +133,15 @@ class UpdateAvailabilityUseCase:
         logger.debug("Executing update_availability job...")
         
         businesses = self.repository.list_all_businesses()
-
+        
         for business in businesses:
             business_availability = dict()
             
             for property in business.properties:
                 availability = self.calculate_property_availability(property)
-                business_availability[property.property_id] = availability
+                prop_availability = property.dict() 
+                prop_availability["availability"] = availability
+                business_availability[property.property_id] = prop_availability
 
             logger.debug(f"Saving availability file for {business.bnbot_id}")
             self.save_dict_to_s3(business_availability, BUCKET_NAME, f"{business.bnbot_id}.json")

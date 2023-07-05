@@ -52,6 +52,8 @@ class Conversation:
         return msg.replace("\n", "  ")
 
     def _add_message(self, msg: Message):
+        if msg.role == "route":
+            msg.role = "assistant"
         self.messages.append(msg)
 
     def add_user_message(self, msg_text: str):

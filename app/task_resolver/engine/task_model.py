@@ -105,10 +105,12 @@ class Task(ABC):
     name: str
     steps: List[Step]
     data: dict
+    previous_task_data: dict
 
     def __init__(self, name: str, steps: List[Step]):
         self.name = name
         self.steps = steps
+        self.previous_task_data = None
     
     @abstractmethod
     def get_next_task(self) -> Optional['Task']:
@@ -119,33 +121,30 @@ class Task(ABC):
             if not step.is_done():
                 return False
         return True
-    
-    def _reset_previous_steps(self, step_name):
-        step_names = [step.name for step in self.steps]
-        if step_name in step_names:
-            for step in reversed(self.steps):
-                step.resolver.data = {}
-                if step.name == step_name:
-                    # Reset Step
-                    break
-        else:
-            logger.error(f"""You are trying to route to an step that does not exists! 
-                         Step Name: {step_name}
-                         Steps available: {step_names}""")
 
     def run(self, conversation_messages: List[Message]) -> Message:
         logger.debug(f"Running Task: {self.name}")
         if self.is_done():
-            logger.error(f"Task {self.name} DONE, returning None")
+            logger.debug(f"Task {self.name} DONE - Saving Task data")
+            self.data = {step.name: step.data.resolver_data for step in self.steps}
+            logger.error(f"Task {self.name} DONE - Returning None")
             return None
         
-        previous_steps_data = {}
+        previous_steps_data = self.previous_task_data if self.previous_task_data is not None else {}
         
         for step in self.steps:
+            
+            if step.name in previous_steps_data:
+                logger.warning(f"{step.name} is already defined in previous TASK!!! You are overriding that information")
+
             previous_steps_data[step.name] = step.data
             if not step.is_done() or step.force_execution:
                 logger.debug(f"Task: {self.name} - Resolving Step {step.name}")
                 response = step.resolve(conversation_messages, previous_steps_data)
+                if self.is_done():
+                    logger.debug(f"Task {self.name} DONE - Saving Task data")
+                    self.data = {step.name: step.data.resolver_data for step in self.steps}
+                
                 if step.is_done() and not step.reply_when_done:
                     continue
 

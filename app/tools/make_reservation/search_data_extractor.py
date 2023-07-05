@@ -62,27 +62,29 @@ json_fn = {
         "properties": {
             "check_in_date": {
                 "type": "string",
-                "description": "The Check In date in format YYYY-MM-DD i.e: 2023-03-25"
+                "description": "If present in the conversation, the Check In date in the format: YYYY-MM-DD i.e: 2023-03-25"
             },
             "check_out_date": {
                 "type": "string",
-                "description": "The Check Out date in format YYYY-MM-DD i.e: 2023-03-25"
+                "description": "If present in the conversation, the Check Out date in the format: YYYY-MM-DD i.e: 2023-03-25"
             },
             "check_in_dow": {
                 "type": "string",
-                "description": "The Check In day of week in English i.e: Tuesday"
+                "description": "If present in the conversation, the Check In day of the week.",
+                "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             },
             "check_out_dow": {
                 "type": "string",
-                "description": "The Check Out day of week in English i.e: Thursday"
+                "description": "If present in the conversation, the Check Out day of the week.",
+                "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             },
             "num_nights": {
                 "type": "string",
-                "description": "The number of nights the guests plan to stay"
+                "description": "If present in the conversation, the number of nights the guests plan to stay"
             },
             "num_guests": {
                 "type": "string",
-                "description": "The number of guests staying"
+                "description": "If present in the conversation, the number of guests staying"
             }
         },
         "required": []
@@ -180,7 +182,7 @@ class SearchDataExtractor:
 
     def run(self, messages: List[Message]):
         
-        messages_input = [{"role": "system", "content": "What are the exact check-in and check-out dates and number of guests for the reservation?"}]
+        messages_input = [{"role": "system", "content": f"What are the exact check-in and check-out dates and number of guests for the reservation? IMPORTANT: Today is: {datetime.now().date().strftime('%Y-%m-%d')}"}]
         for msg in messages:
             messages_input.append({"role": msg.role, "content": msg.text})
         # messages_input.append("role")
@@ -188,11 +190,17 @@ class SearchDataExtractor:
             model="gpt-3.5-turbo-0613",
             messages=messages_input,
             functions=[json_fn],
-            function_call={"name": "calculate_booking_info"},
             temperature=0., 
             max_tokens=500, 
         )
-        fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
-        logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
 
-        return self.calculate_booking_info(fn_parameters)
+        if "function_call" in response.choices[0].message and "arguments" in response.choices[0].message["function_call"]:
+            fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
+            # fn_parameters["user_has_selected"] = ("bnbot_id" in fn_parameters and fn_parameters["bnbot_id"] != "")
+            logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
+
+            return self.calculate_booking_info(fn_parameters)
+        
+        return None
+        
+        
