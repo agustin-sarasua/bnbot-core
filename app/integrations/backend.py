@@ -4,7 +4,9 @@ import asyncio
 from concurrent.futures import Future
 
 from app.backend.domain.entities.business import LoadBusinesses
+from app.backend.domain.entities.booking import Reservation
 from app.backend.presentation.routers.business_router import list_businesses_sync
+from app.backend.presentation.routers.reservation_router import create_reservation_sync
 
 class BackendAPIClient:
     def __init__(self, base_url):
@@ -26,4 +28,8 @@ class BackendAPIClient:
             return json.loads(response.body.decode())
         else:
             return []
-        
+    
+    def create_reservation(self, reservation: Reservation):
+
+        # res
+        pass
