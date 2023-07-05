@@ -1,8 +1,189 @@
+[{
+    "business_id": "id45632",
+    "business_name": "Rio Claro Campgrounds",
+    "description": "An eco-friendly campsite along the Rio Claro river, ideal for nature lovers.",
+    "bnbot_id": "@rio_claro_campgrounds",
+    "bnbot_configuration": {
+        "booking_deposit": 0.1,
+        "pre_book_time": 48
+    },
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "business_owners": [
+        {
+            "name": "Miguel Alvarez",
+            "phone_number": "+59891231234",
+            "email": "miguel.alvarez@example.com"
+        }
+    ],
+    "payment_options": [
+        {
+            "payment_method": "MOBILE_PAYMENT",
+            "instructions": "Use the QR Code at the entrance for mobile payments."
+        }
+    ],
+    "how_to_arrive_instructions": "Head west on Ruta 2. Take the exit at km 284 and follow the gravel road to Rio Claro Campgrounds.",
+    "properties": [
+        {
+            "property_id": "CampSite1",
+            "name": "Camp Site 1",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
+            "description": "Secluded campsite near the river with a fire pit and picnic table.",
+            "amenities": ["Fire Pit", "Picnic Table", "Portable Restroom"],
+            "price_per_night": 20.0,
+            "currency": "USD",
+            "max_guests": 4,
+            "pick_up_keys_instructions": "No keys required. The campsite is open. Please check-in at the reception upon arrival."
+        }
+    ]
+},{
+    "business_id": "id78901",
+    "business_name": "Cielo Azul Resort",
+    "description": "A luxury resort with a magnificent view of the mountains and countryside.",
+    "bnbot_id": "@cielo_azul_resort",
+    "bnbot_configuration": {
+        "booking_deposit": 0.25,
+        "pre_book_time": 24
+    },
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "business_owners": [
+        {
+            "name": "Elena Garcia",
+            "phone_number": "+59892345678",
+            "email": "elena.garcia@example.com"
+        }
+    ],
+    "payment_options": [
+        {
+            "payment_method": "CASH",
+            "instructions": "Cash payments are accepted at the reception desk."
+        }
+    ],
+    "how_to_arrive_instructions": "Take the Ruta 2 highway and exit at km 284. Follow the signs for Cielo Azul Resort.",
+    "properties": [
+        {
+            "property_id": "VillaBella",
+            "name": "Villa Bella",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
+            "description": "Experience luxury in this exquisite villa with an infinity pool and a panoramic view of the mountains.",
+            "amenities": ["Wi-Fi", "Private Parking", "Infinity Pool", "Fitness Center"],
+            "price_per_night": 500.0,
+            "currency": "USD",
+            "max_guests": 6,
+            "pick_up_keys_instructions": "Visit the concierge at the main lobby to collect your keys."
+        }
+    ]
+},{
+    "business_id": "randomid67890",
+    "business_name": "Campo del Sol",
+    "description": "A family-friendly campsite and lodge in the heart of nature.",
+    "bnbot_id": "@campo_del_sol",
+    "bnbot_configuration": {
+        "booking_deposit": 0.2,
+        "pre_book_time": 48
+    },
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "business_owners": [
+        {
+            "name": "Carlos Mendez",
+            "phone_number": "+59898765432",
+            "email": "carlos.mendez@example.com"
+        }
+    ],
+    "payment_options": [
+        {
+            "payment_method": "CREDIT_CARD",
+            "instructions": "We accept all major credit cards."
+        }
+    ],
+    "how_to_arrive_instructions": "Take exit 21 from Ruta 2, and follow the signs for Campo del Sol.",
+    "properties": [
+        {
+            "property_id": "LodgeOne",
+            "name": "Lodge One",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
+            "description": "A cozy lodge with a fireplace, perfect for couples or small families.",
+            "amenities": ["Wi-Fi", "Private Parking", "Pet-friendly", "Fireplace"],
+            "price_per_night": 150.0,
+            "currency": "USD",
+            "max_guests": 4,
+            "pick_up_keys_instructions": "The keys will be under the doormat. Please lock the door and return them under the doormat when checking out."
+        }
+    ]
+},{
+    "business_id": "randomid12345",
+    "business_name": "La Estancia Verde",
+    "description": "An exquisite countryside retreat offering a serene and natural atmosphere.",
+    "bnbot_id": "@la_estancia_verde",
+    "bnbot_configuration": {
+        "booking_deposit": 0.15,
+        "pre_book_time": 72
+    },
+    "location": {
+        "latitude": 37.7749,
+        "longitude": -122.4194,
+        "address": "Ruta 2 km 284",
+        "city": "Mercedes",
+        "state": "Soriano",
+        "country": "Uruguay",
+        "postal_code": "75000"
+    },
+    "business_owners": [
+        {
+            "name": "Julia Rodriguez",
+            "phone_number": "+59891234567",
+            "email": "julia.rodriguez@example.com"
+        }
+    ],
+    "payment_options": [
+        {
+            "payment_method": "PAYPAL",
+            "instructions": "Please use PayPal for transactions."
+        }
+    ],
+    "how_to_arrive_instructions": "Follow Ruta 2 until km 284. The retreat is located near the old mill.",
+    "properties": [
+        {
+            "property_id": "CasaGrande",
+            "name": "Casa Grande",
+            "other_calendar_links": ["https://admin.booking.com/hotel/hoteladmin/ical.html?t=b20bbde6-86d6-4c7c-81d8-72c14ed4788c"],
+            "description": "A spacious villa with rustic interiors, private garden, and an outdoor pool.",
+            "amenities": ["Wi-Fi", "Private Parking", "Pet-friendly", "Outdoor Pool"],
+            "price_per_night": 300.0,
+            "currency": "USD",
+            "max_guests": 10,
+            "pick_up_keys_instructions": "Pick up the keys at the reception desk upon arrival."
+        }
+    ]
+},
 {
-    "business_id": "asdfasdfasdfasdf",
+    "business_id": "complejo_enrique_joaquin_id",
     "business_name": "Complejo Enrique Joaquin",
     "description": "Complejo de campo muy bueno",
-    "bnbot_id": "@complejo_enrique_joaquin",
+    "bnbot_id": "@complejo.enrique.joaquin",
     "bnbot_configuration": {
         "booking_deposit": 0.1,
         "pre_book_time": 60
@@ -54,4 +235,4 @@
             "pick_up_keys_instructions": "Las llaves se encuentran en un box en la puerta de entrada. La clave para abrir el box es 12345."
          }
     ]
-}
+}]

@@ -1,4 +1,4 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 
 from typing import List, Any
 from langchain.chains.llm import LLMChain
@@ -12,6 +12,7 @@ from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 from langchain.chat_models import ChatOpenAI
 from app.utils import chain_verbose
 from langchain.llms import OpenAI
+from app.model import Message
 
 # BOOKING_CONFIRMATION_STEP:
 # HOUSE_SELECTION_STEP:

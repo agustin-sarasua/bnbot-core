@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock
 from typing import List, Any, Dict
 from app.task_resolver.step_resolvers import PostProcessRouterResolver
-from app.task_resolver.engine import Message
+from app.model import Message
 
 class TesPostProcessRouterResolver(unittest.TestCase):
 

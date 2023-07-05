@@ -1,14 +1,19 @@
 from abc import ABC, abstractmethod
 from app.backend.infraestructure.repositories import BusinessRepository
-from app.backend.domain.entities import Business
+import scrapy
 
 class ScrapPropertyUseCase:
 
     def __init__(self):
         pass
 
-    def execute(self, http_link: str = "https://www.booking.com/hotel/uy/casa-en-altos-arrayanes.html?lang=xu"):
+    def execute(self, http_link: str):
 
         pass
         # return self.repository.save(business)
-        
+
+
+
+if __name__ == '__main__':
+    scaper = ScrapPropertyUseCase()
+    result = scaper.execute(http_link ="https://www.booking.com/hotel/uy/casa-en-altos-arrayanes.html?lang=xu")

@@ -1,11 +1,11 @@
 from typing import List, Any
-from app.task_resolver.engine import StepResolver, StepData, Message
+from app.task_resolver.engine import StepResolver, StepData
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-
+from app.model import Message
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
 from langchain.chat_models import ChatOpenAI

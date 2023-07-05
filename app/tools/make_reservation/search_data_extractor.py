@@ -1,27 +1,14 @@
 from typing import List
-from app.task_resolver.engine import Message
+from app.model import Message
 import openai
 import os
 import json
-from app.utils import logger
+from app.utils import logger, remove_spanish_special_characters
 from datetime import datetime, timedelta, date
 
 
 openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-import unicodedata
-
-def remove_spanish_special_characters(text):
-    """
-    Removes Spanish special characters from a string.
-    """
-    # Normalize the string by converting it to Unicode NFD form
-    normalized_text = unicodedata.normalize('NFD', text)
-    # Remove combining characters
-    stripped_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
-    # Remove specific Spanish special characters
-    removed_special_characters = stripped_text.replace('ñ', 'n').replace('Ñ', 'N').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U')
-    return removed_special_characters
 
 def get_current_datetime():
     return datetime.now()
@@ -75,27 +62,29 @@ json_fn = {
         "properties": {
             "check_in_date": {
                 "type": "string",
-                "description": "The Check In date in format YYYY-MM-DD i.e: 2023-03-25"
+                "description": "If present in the conversation, the Check In date in the format: YYYY-MM-DD i.e: 2023-03-25"
             },
             "check_out_date": {
                 "type": "string",
-                "description": "The Check Out date in format YYYY-MM-DD i.e: 2023-03-25"
+                "description": "If present in the conversation, the Check Out date in the format: YYYY-MM-DD i.e: 2023-03-25"
             },
             "check_in_dow": {
                 "type": "string",
-                "description": "The Check In day of week in English i.e: Tuesday"
+                "description": "If present in the conversation, the Check In day of the week.",
+                "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             },
             "check_out_dow": {
                 "type": "string",
-                "description": "The Check Out day of week in English i.e: Thursday"
+                "description": "If present in the conversation, the Check Out day of the week.",
+                "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
             },
             "num_nights": {
                 "type": "string",
-                "description": "The number of nights the guests plan to stay"
+                "description": "If present in the conversation, the number of nights the guests plan to stay"
             },
             "num_guests": {
                 "type": "string",
-                "description": "The number of guests staying"
+                "description": "If present in the conversation, the number of guests staying"
             }
         },
         "required": []
@@ -108,7 +97,7 @@ class SearchDataExtractor:
     def calculate_check_in_date(self, check_in_date, check_in_dow):
         if check_in_date is not None:
             if check_in_date > get_current_datetime().strftime("%Y-%m-%d"):
-                return check_in_date
+                return datetime.strptime(check_in_date, "%Y-%m-%d")
             else:
                 logger.debug(f"check_in_date is from the passt: {check_in_date}")        
         if check_in_dow is not None:
@@ -121,7 +110,7 @@ class SearchDataExtractor:
     def calculate_check_out_date(self, check_in_date: str, check_out_date: str, check_out_dow: str, num_nights: int):
         if check_out_date is not None:
             if check_out_date > get_current_datetime().strftime("%Y-%m-%d") and check_out_date > check_in_date:
-                return check_out_date
+                return datetime.strptime(check_out_date, "%Y-%m-%d")
             else:
                 logger.debug(f"""check_out_date is wrong. 
                              check_out_date: {check_out_date}, 
@@ -193,7 +182,7 @@ class SearchDataExtractor:
 
     def run(self, messages: List[Message]):
         
-        messages_input = [{"role": "system", "content": "What are the the exact check-in and check-out dates and number of guests for the reservation?"}]
+        messages_input = [{"role": "system", "content": f"What are the exact check-in and check-out dates and number of guests for the reservation? IMPORTANT: Today is: {datetime.now().date().strftime('%Y-%m-%d')}"}]
         for msg in messages:
             messages_input.append({"role": msg.role, "content": msg.text})
         # messages_input.append("role")
@@ -201,11 +190,17 @@ class SearchDataExtractor:
             model="gpt-3.5-turbo-0613",
             messages=messages_input,
             functions=[json_fn],
-            function_call={"name": "calculate_booking_info"},
             temperature=0., 
             max_tokens=500, 
         )
-        fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
-        logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
 
-        return self.calculate_booking_info(fn_parameters)
+        if "function_call" in response.choices[0].message and "arguments" in response.choices[0].message["function_call"]:
+            fn_parameters = json.loads(response.choices[0].message["function_call"]["arguments"])
+            # fn_parameters["user_has_selected"] = ("bnbot_id" in fn_parameters and fn_parameters["bnbot_id"] != "")
+            logger.debug(f"calculate_booking_info fn_parameters {fn_parameters}")
+
+            return self.calculate_booking_info(fn_parameters)
+        
+        return None
+        
+        

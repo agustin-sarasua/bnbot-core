@@ -16,3 +16,4 @@ sqlalchemy
 sqlalchemy_utils
 
 scrapy
+icalendar

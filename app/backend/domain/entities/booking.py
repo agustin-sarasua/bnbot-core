@@ -17,6 +17,8 @@ class Reservation(BaseModel):
     currency: str
     chat_id: str
 
+    confirmed: bool = False
+
     # Customer Info
     customer_number: str
     customer_name: str

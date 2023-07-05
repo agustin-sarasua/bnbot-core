@@ -7,24 +7,18 @@ class PropertiesFilterTool:
     
     properties_info_cache = Cache(-1)
 
-    assistant_number = "test-number"
-
     def run(
         self, 
+        bnbot_id: str,
         check_in_date: str, 
         check_out_date: str,
         num_guests: str,
     ) -> dict:
-        # {
-        #     "check_in_date": check_in_date,
-        #     "check_out_date": check_out_date,
-        #     "num_guests": num_guests
-        # }
         num_guests = int(num_guests)
         if check_in_date is None or check_out_date is None or num_guests == 0:
             return dict()
 
-        available_properties = self.load_properties_information()
+        available_properties = self.load_properties_information(bnbot_id)
         return self._filter_properties(available_properties, check_in_date, check_out_date, num_guests)
 
     def _calculate_checkout_date(self, checkin_date, num_nights):
@@ -47,18 +41,18 @@ class PropertiesFilterTool:
                     and num_guests <= avail_capacity
                 ):
                     # Remove multiple keys
-                    del property_info["calendar_link"], property_info["source"], property_info["availability"]
+                    del property_info["other_calendar_links"], property_info["availability"]
                     filtered_properties[property_id] = property_info
                     break  # Stop further iteration if a match is found
         return filtered_properties
 
-    def get_properties_availabe(self):
-        result = self.properties_info_cache.get(self.assistant_number)        
+    def get_properties_availabe(self, bnbot_id: str):
+        result = self.properties_info_cache.get(bnbot_id)        
         if result is None:
             result = self.load_properties_information()
         return result
 
-    def load_properties_information(self):
-        availability = read_json_from_s3("bnbot-bucket", f"availability_{self.assistant_number}.json")
-        self.properties_info_cache.set(self.assistant_number, availability)
+    def load_properties_information(self, bnbot_id: str):
+        availability = read_json_from_s3("bnbot-availability", f"{bnbot_id}.json")
+        self.properties_info_cache.set(bnbot_id, availability)
         return availability

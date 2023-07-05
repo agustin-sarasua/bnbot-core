@@ -1,9 +1,8 @@
-from app.task_resolver.engine import StepResolver, StepData, Message
+from app.task_resolver.engine import StepResolver, StepData
 from typing import List, Any
 from app.utils import get_completion_from_messages, logger
 from app.tools import UserInformationExtractorChain
-
-delimiter = "####"
+from app.model import Message
 
 class GatherUserInfoResolver(StepResolver):
 

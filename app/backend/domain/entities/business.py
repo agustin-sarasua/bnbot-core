@@ -41,3 +41,10 @@ class Business(BaseModel):
     payment_options: Optional[List[PaymentOption]]
     how_to_arrive_instructions: Optional[str]
     properties: Optional[List[Property]]
+
+
+class LoadBusinesses(BaseModel):
+    bnbot_id: Optional[str]
+    location: Optional[str]
+    business_name: Optional[str]
+    business_owner: Optional[str]

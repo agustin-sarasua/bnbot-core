@@ -1,16 +1,40 @@
-from app.task_resolver.engine import Task, Message
 from typing import List, Any
+import uuid
+from datetime import datetime
 
-class Conversation:
+class Message:
+
+    def __init__(self, role: str, text: str, key: str = None):
+        self.key = key
+        self.text = text
+        self.role = role
+        self.id = uuid.uuid4()
+        self.timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    @staticmethod
+    def assistant_message(text):
+        return Message("assistant", text)
     
-    customer_number: str
-    task: Task # e.g: the user is making a reservation
+    @staticmethod
+    def route_message(text: str, key: str):
+        return Message("route", text, key)
+    
+    @staticmethod
+    def user_message(text):
+        return Message("user", text)
+    
+    def __str__(self):
+        return f"{self.role}: {self.text}"
+    
+    def __repr__(self):
+        return str(self)
+
+    
+class Conversation:
     messages: List[Message]
 
-    def __init__(self, customer_number: str, task: Task):
+    def __init__(self):
         self.messages = []
-        self.task = task
-        self.customer_number = customer_number
 
     def get_messages(self) -> List[Message]:
         return self.messages
@@ -28,6 +52,8 @@ class Conversation:
         return msg.replace("\n", "  ")
 
     def _add_message(self, msg: Message):
+        if msg.role == "route":
+            msg.role = "assistant"
         self.messages.append(msg)
 
     def add_user_message(self, msg_text: str):

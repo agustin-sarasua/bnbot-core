@@ -1,7 +1,7 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 from typing import List, Any
 from datetime import datetime, timedelta
-
+from app.model import Message
 
 class PromptInjectionResolver(StepResolver):
 

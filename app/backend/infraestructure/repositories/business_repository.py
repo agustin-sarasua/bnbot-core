@@ -27,3 +27,29 @@ class BusinessRepository:
         )
 
         return business
+
+    def list_all_businesses(self) -> List[Business]:
+        # Scanning the table to get all items
+        response = self.table.scan()
+
+        # Extracting the Items from the response
+        items = response['Items']
+
+        # Paginating if there are more records to retrieve
+        while 'LastEvaluatedKey' in response:
+            response = self.table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items.extend(response['Items'])
+
+        # Parsing items into Pydantic objects
+        businesses = []
+        for item in items:
+            # Deserialize the 'info' field into a Python dictionary
+            info = json.loads(item['info'])
+
+            # Create a Business object from the deserialized 'info' field
+            # Optionally, you can also include 'id' and 'bnbot_id' if they are not already in 'info'
+            business = Business(**info)
+
+            businesses.append(business)
+
+        return businesses

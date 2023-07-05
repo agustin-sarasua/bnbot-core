@@ -1,14 +1,15 @@
-from app.task_resolver.engine import StepResolver, Message
+from app.task_resolver.engine import StepResolver
 
 from typing import List, Any
 from langchain.chains.llm import LLMChain
 from langchain.prompts import PromptTemplate
 
 # from langchain.chat_models import ChatOpenAI
-from app.utils import chain_verbose
+from app.utils import chain_verbose, logger
 from langchain.llms import OpenAI
 
 from app.tools import NextStepExtractor
+from app.model import Message
 
 from langchain.output_parsers import StructuredOutputParser, ResponseSchema
 
@@ -55,16 +56,12 @@ class PostProcessRouterChain:
 
 class PostProcessRouterResolver(StepResolver):
 
-    # router_chain: PostProcessRouterChain
-
     def __init__(self, steps):
         self.steps = steps
         self.next_step_extractor = NextStepExtractor()
-        # self.router_chain = PostProcessRouterChain()
-    
+
     def run(self, messages: List[Message], previous_steps_data: dict=None, step_chat_history: List[Message] = None) -> Message:
-        # chat_history = self.build_chat_history(messages)
-        # next_step = self.router_chain.run(chat_history, self.steps_str)
+        
         result = self.next_step_extractor.run_select_next_step(messages, self.steps)
         return Message.route_message("Routing to previous Step", result["step_id"]) 
         

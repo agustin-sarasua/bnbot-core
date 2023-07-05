@@ -8,6 +8,20 @@ from datetime import datetime
 def get_current_datetime():
     return datetime.now()
 
+import unicodedata
+
+def remove_spanish_special_characters(text):
+    """
+    Removes Spanish special characters from a string.
+    """
+    # Normalize the string by converting it to Unicode NFD form
+    normalized_text = unicodedata.normalize('NFD', text)
+    # Remove combining characters
+    stripped_text = ''.join(c for c in normalized_text if not unicodedata.combining(c))
+    # Remove specific Spanish special characters
+    removed_special_characters = stripped_text.replace('ñ', 'n').replace('Ñ', 'N').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('Á', 'A').replace('É', 'E').replace('Í', 'I').replace('Ó', 'O').replace('Ú', 'U')
+    return removed_special_characters
+
 def get_completion_from_messages(messages, 
                                  model="gpt-3.5-turbo", 
                                  temperature=0, 

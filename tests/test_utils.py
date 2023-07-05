@@ -16,33 +16,11 @@ from typing import List
 
 template = """{context}
 
-Respond ONLY with the next message from the Customer.
-If the conversation if over you reply with an empty string, i.e: "".
 Current conversation:
 {chat_history}
-Customer:
-"""
 
-# template ="""Given a conversation between a user and an assistant.
-# What is the next interaction of the user?
-# Always respond in spanish.
-
-# These are your requirements for the accommodation: {context}
-
-# Follow these Steps:
-
-# Step 1: Make sure you provide information about check-in, check-out and number of people.
-
-# Step 2: Choose from the available houses one that meets your requirements if there is one.
-
-# Step 3: If you managed to choose a house, provide the information asked by the assistant to book the house.
-
-# Step 4: If you finally booked a house, thank the assistant for its help.
-
-# You respond in a short, very conversational friendly style.
-
-# Here is the conversation:
-# {chat_history}"""
+You respond in a short, very conversational friendly style.
+response to th assistant:"""
 
 chain_of_though_template = """You are customer that wants to book an accommodation for the weekend \
 in the city of "Mercedes" at the "Complejo Enrique Joaquin". \
@@ -56,7 +34,9 @@ Follow these Steps before responding to the user new message:
 
 Current conversation:
 {chat_history}
-user:
+
+You respond in a short, very conversational friendly style.
+response to th assistant:
 """
 
 response_schemas = [
