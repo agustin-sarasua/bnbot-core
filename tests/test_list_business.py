@@ -8,12 +8,13 @@ import openai
 from dotenv import load_dotenv, find_dotenv
 from unittest.mock import MagicMock
 import json
+import os
 
 class TestListBusinessUseCase(unittest.TestCase):
     
-    # def setUp(self):
-    #     _ = load_dotenv(find_dotenv(filename="../.env")) # read local .env file
-    #     openai.api_key = "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" #= os.environ['OPENAI_API_KEY']
+    def setUp(self):
+        _ = load_dotenv(find_dotenv(filename="../.env")) # read local .env file
+        openai.api_key = os.environ['OPENAI_API_KEY']
     
     def test_execute(self):
         # Arrange

@@ -7,6 +7,7 @@ import json
 import openai
 from dotenv import load_dotenv, find_dotenv
 from unittest.mock import patch
+import os
 
 def mock_list_businesses_side_effect(*args, **kwargs):
     # Extracting input arguments
@@ -29,7 +30,7 @@ class TestBusinessSelectionResolver(unittest.TestCase):
     
     def setUp(self):
         _ = load_dotenv(find_dotenv(filename="../.env")) # read local .env file
-        openai.api_key = "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" #= os.environ['OPENAI_API_KEY']
+        openai.api_key = os.environ['OPENAI_API_KEY']
     
     @patch('app.integrations.BackendAPIClient.list_businesses')
     def test_run(self, mock_list_businesses):
