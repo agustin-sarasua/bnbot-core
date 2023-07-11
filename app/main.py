@@ -5,7 +5,7 @@ from fastapi import FastAPI, Form
 
 from app.backend.presentation.routers import reservation_router, business_router, bnbot_router
 from app.backend.main_backend import init_backend
-import traceback
+from fastapi.middleware.cors import CORSMiddleware
 
 account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
 auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
@@ -22,6 +22,19 @@ app.include_router(business_router.business_api_router)
 app.include_router(bnbot_router.bnbot_api_router)
 ##### BACKEND #####
 
+origins = [
+    "http://localhost",
+    "http://localhost:4200",
+    # Add more origins as needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():

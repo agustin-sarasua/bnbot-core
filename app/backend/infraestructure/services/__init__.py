@@ -1,0 +1,1 @@
+from app.backend.infraestructure.services.auth_service import validate_token

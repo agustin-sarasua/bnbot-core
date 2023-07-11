@@ -57,7 +57,7 @@ class UpdateCalendarUseCase:
     def execute(self):
         logger.debug("Executing update_availability job...")
         
-        businesses = self.repository.
+        businesses = []
         
         for business in businesses:
             business_availability = dict()

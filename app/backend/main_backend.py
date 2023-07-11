@@ -40,6 +40,7 @@ def init_backend(account_sid, auth_token, twilio_number, openai_token):
     business_repository = BusinessRepository(aws_access_key_id, aws_secret_access_key, region, dynamo_url)
     business_router.create_business_use_case = CreateBusinessUseCase(business_repository)
     business_router.list_business_use_case = ListBusinessUseCase(business_repository)
+    business_router.get_business_use_case = GetBusinessUseCase(business_repository)
     business_router.update_availability_use_case = UpdateAvailabilityUseCase(business_repository)
 
     system = System()

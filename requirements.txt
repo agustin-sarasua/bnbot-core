@@ -17,3 +17,6 @@ sqlalchemy_utils
 
 scrapy
 icalendar
+
+python-jose[cryptography]
+six
