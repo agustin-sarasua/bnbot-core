@@ -28,7 +28,7 @@ class BackendAPIClient:
             return json.loads(response.body.decode())
         else:
             return []
-    
+
     def create_reservation(self, reservation: Reservation):
 
         # res

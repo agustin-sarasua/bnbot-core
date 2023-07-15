@@ -2,6 +2,7 @@ from app.backend.domain.entities import Business
 from app.utils import logger
 from typing import List
 from typing import Optional
+from boto3.dynamodb.conditions import Key
 import boto3
 import uuid
 import json
@@ -16,15 +17,31 @@ class BusinessRepository:
 
     def save(self, business: Business):
         business_id = str(uuid.uuid4())
-        business.business_id = business_id
+        business.id = business_id
 
         self.table.put_item(
             Item={
                 'id': business_id,
                 'bnbot_id': business.bnbot_id,
+                'user_id': business.user_id,
                 'info': business.json()
             }
         )
+
+        return business
+    
+    def load_by_user_id(self, user_id):
+        response = self.table.scan(
+            FilterExpression= Key('user_id').eq(user_id)
+        )
+        
+        items = response['Items']
+        if not items:
+            return None
+
+        business_data = items[0]
+        info = json.loads(business_data['info'])
+        business = Business(**info)
 
         return business
 

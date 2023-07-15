@@ -24,7 +24,7 @@ class ReservationDB(Base):
     check_in: Mapped[str] = mapped_column(Date())
     check_out: Mapped[str] = mapped_column(Date())
     num_guests: Mapped[int] = mapped_column(Integer())
-    property_id: Mapped[int] = mapped_column(String(255))
+    property_id: Mapped[str] = mapped_column(String(255))
 
     price_per_night: Mapped[float] = mapped_column(Float())
     total_price: Mapped[float] = mapped_column(Float())
@@ -72,3 +72,32 @@ class ReservationRepository:
         db.commit()
         db.refresh(db_reservations)
         return db_reservations
+    
+    def load_by_property_id(self, property_id: str) -> List[Reservation]:
+        # create a new session
+        db = self.sessionLocal()
+        
+        # query the reservations that match the property_id
+        db_reservations = db.query(ReservationDB).filter(ReservationDB.property_id == property_id).all()
+
+        # close the session
+        db.close()
+
+        # convert db_reservations to a list of Reservation objects and return it
+        reservations = [Reservation(
+                            check_in=res.check_in,
+                            check_out=res.check_out,
+                            num_guests=res.num_guests,
+                            property_id=res.property_id,
+                            price_per_night=res.price_per_night,
+                            total_price=res.total_price,
+                            currency=res.currency,
+                            chat_id=res.chat_id,
+                            customer_number=res.customer_number,
+                            customer_name=res.customer_name,
+                            customer_email=res.customer_email,
+                            timestamp=res.timestamp)
+                        for res in db_reservations]
+        return reservations
+
+

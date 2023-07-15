@@ -41,7 +41,10 @@ def init_backend(account_sid, auth_token, twilio_number, openai_token):
     business_router.create_business_use_case = CreateBusinessUseCase(business_repository)
     business_router.list_business_use_case = ListBusinessUseCase(business_repository)
     business_router.get_business_use_case = GetBusinessUseCase(business_repository)
+    #JOBS
     business_router.update_availability_use_case = UpdateAvailabilityUseCase(business_repository)
+    business_router.update_calendar_user_case = UpdateCalendarUseCase(reservation_repository, business_repository)
+
 
     system = System()
     twilio_integration = TwilioMessagingAPI(account_sid, auth_token, twilio_number)

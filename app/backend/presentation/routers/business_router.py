@@ -4,7 +4,7 @@ from fastapi import FastAPI, Form, Depends
 from app.utils import logger
 import traceback
 
-from app.backend.domain.usecases import CreateBusinessUseCase, ListBusinessUseCase, UpdateAvailabilityUseCase, GetBusinessUseCase
+from app.backend.domain.usecases import *
 from app.backend.domain.entities import Business, LoadBusinesses
 
 from app.backend.infraestructure.services import validate_token
@@ -22,8 +22,12 @@ business_api_router = APIRouter()
 
 create_business_use_case: CreateBusinessUseCase
 list_business_use_case: ListBusinessUseCase
-update_availability_use_case: UpdateAvailabilityUseCase
 get_business_use_case: GetBusinessUseCase
+
+#JOBS
+update_availability_use_case: UpdateAvailabilityUseCase
+update_calendar_user_case: UpdateCalendarUseCase
+
 
 @business_api_router.get("/update_availability")
 async def update_availability(usecase: UpdateAvailabilityUseCase=Depends(lambda:update_availability_use_case)):
@@ -34,6 +38,16 @@ async def update_availability(usecase: UpdateAvailabilityUseCase=Depends(lambda:
         traceback.print_exc()
         logger.error(f"Exception {str(e)}")
         return JSONResponse(content=str(e), status_code=500)
+
+@business_api_router.get("/update_calendar")
+async def update_availability(usecase: UpdateCalendarUseCase=Depends(lambda:update_calendar_user_case)):
+    try:
+        usecase.execute()
+        return JSONResponse(content="Availability Updated!", status_code=200)
+    except Exception as e:
+        traceback.print_exc()
+        logger.error(f"Exception {str(e)}")
+        return JSONResponse(content=str(e), status_code=500)    
 
 @business_api_router.post("/business")
 async def create_business(business: Business, 
